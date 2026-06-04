@@ -14,22 +14,18 @@ export default function Reves() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 📥 charger initialement
   async function loadDreams() {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("dreams")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (!error) {
-      setDreams(data || []);
-    }
+    setDreams(data || []);
   }
 
   useEffect(() => {
     loadDreams();
 
-    // ⚡ REALTIME
     const channel = supabase
       .channel("dreams-live")
       .on(
@@ -40,14 +36,10 @@ export default function Reves() {
           table: "dreams",
         },
         (payload) => {
-          const newDream = payload.new as Dream;
-
-          // ❌ éviter doublons (important)
-          setDreams((current) => {
-            const exists = current.find((d) => d.id === newDream.id);
-            if (exists) return current;
-            return [newDream, ...current];
-          });
+          setDreams((current) => [
+            payload.new as Dream,
+            ...current,
+          ]);
         }
       )
       .subscribe();
@@ -57,37 +49,29 @@ export default function Reves() {
     };
   }, []);
 
-  // ✍️ AJOUT (optimistic UI + Supabase)
   async function addDream() {
     if (!input.trim()) return;
 
     const text = input;
+    setInput("");
 
-    // ⚡ affichage immédiat
     const tempId = crypto.randomUUID();
 
-    const tempDream: Dream = {
-      id: tempId,
-      text,
-      created_at: new Date().toISOString(),
-    };
+    // ⚡ affichage instantané
+    setDreams((prev) => [
+      { id: tempId, text, created_at: new Date().toISOString() },
+      ...prev,
+    ]);
 
-    setDreams((prev) => [tempDream, ...prev]);
-    setInput("");
     setLoading(true);
 
-    // ⚡ envoi Supabase
     const { error } = await supabase.from("dreams").insert([
-      {
-        text,
-      },
+      { text },
     ]);
 
     setLoading(false);
 
-    // ❌ rollback si erreur
     if (error) {
-      console.error(error);
       setDreams((prev) => prev.filter((d) => d.id !== tempId));
     }
   }
@@ -96,18 +80,18 @@ export default function Reves() {
     <main className="h-screen flex flex-col bg-white">
 
       {/* TITRE */}
-      <header className="p-4 border-b text-center">
-        <h1 className="text-2xl font-bold">RÊVES</h1>
+      <header className="p-3 border-b text-center">
+        <h1 className="text-xl font-bold">RÊVES</h1>
       </header>
 
-      {/* LISTE (mobile clean) */}
-      <section className="flex-1 overflow-y-auto px-3 py-3">
+      {/* LISTE PLUS COMPACTE */}
+      <section className="flex-1 overflow-y-auto px-3 py-2">
         <div className="max-w-md mx-auto space-y-2">
 
           {dreams.map((d) => (
             <div
               key={d.id}
-              className="p-3 text-sm border rounded-xl bg-gray-50 shadow-sm"
+              className="p-2 text-sm border rounded-lg bg-gray-50"
             >
               {d.text}
             </div>
@@ -116,28 +100,31 @@ export default function Reves() {
         </div>
       </section>
 
-      {/* INPUT FIXE EN BAS */}
-      <footer className="border-t p-3 bg-white">
+      {/* INPUT FIXÉ EN BAS (MOBILE STYLE) */}
+      <footer className="fixed bottom-0 left-0 right-0 border-t bg-white p-2">
         <div className="max-w-md mx-auto flex gap-2">
 
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Écris ton rêve..."
-            className="flex-1 border rounded-xl p-2 text-sm resize-none"
+            className="flex-1 border rounded-lg p-2 text-sm resize-none"
             rows={2}
           />
 
           <button
             onClick={addDream}
             disabled={loading}
-            className="px-4 bg-black text-white rounded-xl text-sm"
+            className="px-4 bg-black text-white rounded-lg text-sm"
           >
-            {loading ? "..." : "OK"}
+            {loading ? "..." : "Partager"}
           </button>
 
         </div>
       </footer>
+
+      {/* ESPACE POUR ÉVITER QUE LE FOOTER CACHE LE CONTENU */}
+      <div className="h-20" />
 
     </main>
   );
