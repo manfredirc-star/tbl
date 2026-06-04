@@ -8,6 +8,7 @@ type Dream = {
   id: string;
   text: string;
   created_at: string;
+  likes: number;
 };
 
 export default function Reves() {
@@ -17,7 +18,7 @@ export default function Reves() {
 
   const router = useRouter();
 
-  // 🌙 charger rêves
+  // 📥 load dreams
   async function loadDreams() {
     const { data } = await supabase
       .from("dreams")
@@ -30,7 +31,6 @@ export default function Reves() {
   useEffect(() => {
     loadDreams();
 
-    // ⚡ realtime
     const channel = supabase
       .channel("dreams-live")
       .on(
@@ -41,10 +41,7 @@ export default function Reves() {
           table: "dreams",
         },
         (payload) => {
-          setDreams((prev) => [
-            payload.new as Dream,
-            ...prev,
-          ]);
+          setDreams((prev) => [payload.new as Dream, ...prev]);
         }
       )
       .subscribe();
@@ -54,7 +51,7 @@ export default function Reves() {
     };
   }, []);
 
-  // ✨ partager rêve
+  // ✨ publier nouveau rêve
   async function addDream() {
     if (!input.trim()) return;
 
@@ -65,15 +62,15 @@ export default function Reves() {
       id: crypto.randomUUID(),
       text,
       created_at: new Date().toISOString(),
+      likes: 0,
     };
 
-    // apparition immédiate
     setDreams((prev) => [temp, ...prev]);
 
     setLoading(true);
 
     const { error } = await supabase.from("dreams").insert([
-      { text },
+      { text, likes: 0 },
     ]);
 
     setLoading(false);
@@ -83,29 +80,41 @@ export default function Reves() {
     }
   }
 
+  // ❤️ like
+  async function likeDream(id: string, currentLikes: number) {
+    const newLikes = currentLikes + 1;
+
+    setDreams((prev) =>
+      prev.map((d) =>
+        d.id === id ? { ...d, likes: newLikes } : d
+      )
+    );
+
+    await supabase
+      .from("dreams")
+      .update({ likes: newLikes })
+      .eq("id", id);
+  }
+
+  // 🌙 continuer rêve (ajoute du texte en bas)
+  function continueDream(text: string) {
+    setInput((prev) => (prev ? prev + " " + text : text));
+  }
+
   return (
     <main className="h-screen flex flex-col relative overflow-hidden bg-black text-white">
 
-      {/* 🌫 FOND ONIRIQUE ANIMÉ */}
-      <div className="absolute inset-0 opacity-30 animate-pulse bg-gradient-to-b from-indigo-900 via-black to-purple-900" />
+      {/* 🌫 background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-indigo-950 via-black to-purple-950 opacity-60" />
 
-      {/* ✨ PARTICULES RÊVE (simple illusion) */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute w-2 h-2 bg-white rounded-full opacity-10 animate-ping top-1/4 left-1/3" />
-        <div className="absolute w-1 h-1 bg-white rounded-full opacity-10 animate-ping top-2/3 left-2/3" />
-        <div className="absolute w-1 h-1 bg-white rounded-full opacity-10 animate-ping top-1/2 left-1/4" />
-      </div>
-
-      {/* TITRE */}
+      {/* TITLE */}
       <header className="relative z-10 p-3 text-center border-b border-white/10">
-        <h1 className="text-xl tracking-widest font-light">
-          RÊVES COLLECTIFS
-        </h1>
+        <h1 className="text-lg tracking-widest">RÊVES COLLECTIFS</h1>
       </header>
 
-      {/* LISTE RÊVES */}
+      {/* LIST */}
       <section className="relative z-10 flex-1 overflow-y-auto px-3 py-3">
-        <div className="max-w-md mx-auto space-y-2">
+        <div className="max-w-md mx-auto space-y-3">
 
           {dreams.map((d) => (
             <div
@@ -114,73 +123,64 @@ export default function Reves() {
                 p-3 text-sm rounded-xl
                 bg-white/10 backdrop-blur-md
                 border border-white/10
-                transition-all duration-500
-                hover:scale-[1.02]
               "
             >
-              {d.text}
+              {/* texte */}
+              <p className="mb-3">{d.text}</p>
+
+              {/* actions */}
+              <div className="flex justify-between items-center">
+
+                {/* ❤️ LIKE */}
+                <button
+                  onClick={() => likeDream(d.id, d.likes || 0)}
+                  className="text-sm flex items-center gap-1 opacity-80 hover:opacity-100"
+                >
+                  ❤️ {d.likes || 0}
+                </button>
+
+                {/* CONTINUER */}
+                <button
+                  onClick={() => continueDream(d.text)}
+                  className="text-xs px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20"
+                >
+                  Continuer
+                </button>
+
+              </div>
             </div>
           ))}
 
         </div>
       </section>
 
-      {/* INPUT FIXE ONIRIQUE */}
-      <footer className="relative z-10 fixed bottom-0 left-0 right-0 border-t border-white/10 bg-black/40 backdrop-blur-xl p-2">
+      {/* INPUT BAS */}
+      <footer className="fixed bottom-0 left-0 right-0 border-t border-white/10 bg-black/60 backdrop-blur-xl p-2">
         <div className="max-w-md mx-auto flex gap-2">
 
-          {/* INPUT VIVANT */}
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Écris ton rêve..."
+            placeholder="Écris ton rêve ou continue un rêve..."
             className="
               flex-1 p-2 text-sm rounded-xl resize-none
-              bg-white/10 text-white placeholder-white/40
+              bg-white/10 text-white
               border border-white/10
-              transition-all duration-300
-              focus:scale-[1.03] focus:ring-2 focus:ring-purple-400
-              focus:bg-white/20
+              focus:ring-2 focus:ring-purple-400
             "
             rows={2}
           />
 
-          {/* PARTAGER */}
           <button
             onClick={addDream}
             disabled={loading}
-            className="
-              px-3 rounded-xl text-sm
-              bg-purple-500/80 hover:bg-purple-400
-              transition-all
-            "
+            className="px-3 rounded-xl bg-purple-500"
           >
             {loading ? "..." : "Partager"}
           </button>
 
-          {/* CONTINUER */}
-          <button
-            onClick={() => router.push("/final")}
-            className="
-              px-3 rounded-xl text-sm
-              bg-white/10 border border-white/10
-              hover:bg-white/20 transition-all
-            "
-          >
-            Continuer
-          </button>
-
         </div>
       </footer>
-
-      {/* 💬 TEXTE QUI FLOTTÉ PENDANT L'ÉCRITURE */}
-      {input && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 pointer-events-none">
-          <div className="text-white/40 text-sm animate-bounce">
-            {input}
-          </div>
-        </div>
-      )}
 
     </main>
   );
