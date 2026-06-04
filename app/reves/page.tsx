@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 type Dream = {
@@ -18,6 +19,8 @@ type Reply = {
 };
 
 export default function Reves() {
+  const router = useRouter();
+
   const [dreams, setDreams] = useState<Dream[]>([]);
   const [replies, setReplies] = useState<Reply[]>([]);
   const [input, setInput] = useState("");
@@ -25,7 +28,7 @@ export default function Reves() {
   const [activeReply, setActiveReply] = useState<string | null>(null);
   const [floatingText, setFloatingText] = useState("");
 
-  // 📥 LOAD INITIAL DATA
+  // 📥 LOAD DREAMS
   async function loadDreams() {
     const { data } = await supabase
       .from("dreams")
@@ -35,6 +38,7 @@ export default function Reves() {
     setDreams(data || []);
   }
 
+  // 📥 LOAD REPLIES
   async function loadReplies() {
     const { data } = await supabase
       .from("dream_replies")
@@ -48,7 +52,7 @@ export default function Reves() {
     loadDreams();
     loadReplies();
 
-    // ⚡ REALTIME DREAMS
+    // ⚡ REALTIME
     const channel = supabase
       .channel("dreams-live")
       .on(
@@ -102,7 +106,6 @@ export default function Reves() {
       likes: 0,
     };
 
-    // ⚡ instant UI
     setDreams((prev) => [temp, ...prev]);
 
     const { data, error } = await supabase
@@ -118,7 +121,7 @@ export default function Reves() {
     }
   }
 
-  // ❤️ LIKE (instant + DB sync)
+  // ❤️ LIKE
   async function likeDream(id: string) {
     setDreams((prev) =>
       prev.map((d) =>
@@ -135,7 +138,7 @@ export default function Reves() {
       .eq("id", id);
   }
 
-  // 💬 CONTINUE DREAM (reply)
+  // 💬 CONTINUE (reply)
   async function sendReply(dreamId: string) {
     if (!replyInput.trim()) return;
 
@@ -151,7 +154,6 @@ export default function Reves() {
       created_at: new Date().toISOString(),
     };
 
-    // instant UI
     setReplies((prev) => [...prev, temp]);
 
     const { data } = await supabase
@@ -170,7 +172,7 @@ export default function Reves() {
   return (
     <main className="h-screen flex flex-col bg-black text-white relative overflow-hidden">
 
-      {/* 🌌 BACKGROUND ONIRIQUE */}
+      {/* 🌌 BACKGROUND */}
       <div className="absolute inset-0 bg-gradient-to-b from-indigo-950 via-black to-purple-950 opacity-70 animate-pulse" />
 
       {/* HEADER */}
@@ -178,8 +180,8 @@ export default function Reves() {
         <h1 className="text-sm tracking-[0.3em]">RÊVES COLLECTIFS</h1>
       </header>
 
-      {/* DREAMS LIST */}
-      <section className="relative z-10 flex-1 overflow-y-auto p-3 space-y-3">
+      {/* DREAMS LIST (IMPORTANT: pb-24 = input collé) */}
+      <section className="relative z-10 flex-1 overflow-y-auto p-3 pb-24 space-y-3">
 
         {dreams.map((d) => (
           <div
@@ -197,9 +199,7 @@ export default function Reves() {
 
               <button
                 onClick={() =>
-                  setActiveReply(
-                    activeReply === d.id ? null : d.id
-                  )
+                  setActiveReply(activeReply === d.id ? null : d.id)
                 }
                 className="bg-white/10 px-2 py-1 rounded"
               >
@@ -245,10 +245,18 @@ export default function Reves() {
 
       </section>
 
-      {/* INPUT GLOBAL */}
-      <footer className="relative z-10 p-2 border-t border-white/10 bg-black/60">
-        <div className="flex gap-2">
+      {/* 🌫 FLOATING TEXT */}
+      {floatingText && (
+        <div className="absolute bottom-28 left-1/2 -translate-x-1/2 text-white/40 text-sm animate-bounce pointer-events-none">
+          {floatingText}
+        </div>
+      )}
 
+      {/* FOOTER MOBILE OPTIMISÉ */}
+      <footer className="relative z-10 p-2 border-t border-white/10 bg-black/70 backdrop-blur-md">
+        <div className="flex gap-2 max-w-md mx-auto">
+
+          {/* INPUT */}
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -256,22 +264,24 @@ export default function Reves() {
             className="flex-1 p-2 text-sm bg-white/10 rounded"
           />
 
+          {/* PARTAGER */}
           <button
             onClick={addDream}
-            className="px-3 bg-purple-500 rounded"
+            className="px-3 bg-purple-500 rounded text-sm"
           >
             Partager
           </button>
 
+          {/* CONTINUER → FINAL */}
+          <button
+            onClick={() => router.push("/final")}
+            className="px-3 bg-white/10 border border-white/10 rounded text-sm"
+          >
+            Continuer
+          </button>
+
         </div>
       </footer>
-
-      {/* 🌫 FLOATING TEXT */}
-      {floatingText && (
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-white/40 text-sm animate-bounce pointer-events-none">
-          {floatingText}
-        </div>
-      )}
 
     </main>
   );
