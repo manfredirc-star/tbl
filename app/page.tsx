@@ -6,15 +6,15 @@ export default function Home() {
       </h1>
 
       <p className="mt-6 max-w-md">
-        Une instabilité a été détectée à Avignon.
-        Si tu lis ceci, tu es déjà concerné.
+        Une boucle onirique a été détectée.<br />
+        Si tu es ici, tu es déjà concerné.
       </p>
 
       <a
         href="/test"
         className="mt-8 px-6 py-3 bg-black text-white rounded"
       >
-        Commencer
+        rentrer
       </a>
     </main>
   );
