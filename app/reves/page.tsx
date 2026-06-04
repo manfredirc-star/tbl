@@ -28,33 +28,34 @@ export default function Reves() {
   const [activeReply, setActiveReply] = useState<string | null>(null);
   const [floatingText, setFloatingText] = useState("");
 
-  // 📥 LOAD DREAMS
+  // 📥 LOAD DREAMS (SOURCE OF TRUTH)
   async function loadDreams() {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("dreams")
       .select("*")
       .order("created_at", { ascending: false });
 
-    setDreams(data || []);
+    if (!error) setDreams(data || []);
   }
 
-  // 📥 LOAD REPLIES
+  // 📥 LOAD REPLIES (SOURCE OF TRUTH)
   async function loadReplies() {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("dream_replies")
       .select("*")
       .order("created_at", { ascending: true });
 
-    setReplies(data || []);
+    if (!error) setReplies(data || []);
   }
 
   useEffect(() => {
     loadDreams();
     loadReplies();
 
-    // ⚡ REALTIME
+    // ⚡ REALTIME SYNC
     const channel = supabase
       .channel("dreams-live")
+
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "dreams" },
@@ -66,6 +67,7 @@ export default function Reves() {
           });
         }
       )
+
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "dreams" },
@@ -77,6 +79,7 @@ export default function Reves() {
           );
         }
       )
+
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "dream_replies" },
@@ -84,6 +87,7 @@ export default function Reves() {
           setReplies((prev) => [...prev, payload.new as Reply]);
         }
       )
+
       .subscribe();
 
     return () => {
@@ -91,7 +95,7 @@ export default function Reves() {
     };
   }, []);
 
-  // ✨ ADD DREAM
+  // ✨ ADD DREAM (optimistic + DB sync)
   async function addDream() {
     if (!input.trim()) return;
 
@@ -121,24 +125,26 @@ export default function Reves() {
     }
   }
 
-  // ❤️ LIKE
+  // ❤️ LIKE (persistant + instant UI)
   async function likeDream(id: string) {
-    setDreams((prev) =>
-      prev.map((d) =>
-        d.id === id ? { ...d, likes: d.likes + 1 } : d
-      )
-    );
-
     const dream = dreams.find((d) => d.id === id);
     if (!dream) return;
 
+    const newLikes = (dream.likes || 0) + 1;
+
+    setDreams((prev) =>
+      prev.map((d) =>
+        d.id === id ? { ...d, likes: newLikes } : d
+      )
+    );
+
     await supabase
       .from("dreams")
-      .update({ likes: dream.likes + 1 })
+      .update({ likes: newLikes })
       .eq("id", id);
   }
 
-  // 💬 CONTINUE (reply)
+  // 💬 CONTINUE DREAM (reply persisté)
   async function sendReply(dreamId: string) {
     if (!replyInput.trim()) return;
 
@@ -147,25 +153,14 @@ export default function Reves() {
     setActiveReply(null);
     setFloatingText(text);
 
-    const temp: Reply = {
-      id: crypto.randomUUID(),
-      dream_id: dreamId,
-      text,
-      created_at: new Date().toISOString(),
-    };
-
-    setReplies((prev) => [...prev, temp]);
-
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("dream_replies")
       .insert([{ dream_id: dreamId, text }])
       .select()
       .single();
 
-    if (data) {
-      setReplies((prev) =>
-        prev.map((r) => (r.id === temp.id ? data : r))
-      );
+    if (!error && data) {
+      setReplies((prev) => [...prev, data]);
     }
   }
 
@@ -180,7 +175,7 @@ export default function Reves() {
         <h1 className="text-sm tracking-[0.3em]">RÊVES COLLECTIFS</h1>
       </header>
 
-      {/* DREAMS LIST (IMPORTANT: pb-24 = input collé) */}
+      {/* LIST (IMPORTANT: pb-24 = input collé mobile) */}
       <section className="relative z-10 flex-1 overflow-y-auto p-3 pb-24 space-y-3">
 
         {dreams.map((d) => (
@@ -208,7 +203,7 @@ export default function Reves() {
 
             </div>
 
-            {/* REPLIES */}
+            {/* REPLIES (persistants + reload OK) */}
             <div className="mt-2 space-y-1">
               {replies
                 .filter((r) => r.dream_id === d.id)
@@ -252,11 +247,10 @@ export default function Reves() {
         </div>
       )}
 
-      {/* FOOTER MOBILE OPTIMISÉ */}
+      {/* FOOTER MOBILE */}
       <footer className="relative z-10 p-2 border-t border-white/10 bg-black/70 backdrop-blur-md">
         <div className="flex gap-2 max-w-md mx-auto">
 
-          {/* INPUT */}
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -264,7 +258,6 @@ export default function Reves() {
             className="flex-1 p-2 text-sm bg-white/10 rounded"
           />
 
-          {/* PARTAGER */}
           <button
             onClick={addDream}
             className="px-3 bg-purple-500 rounded text-sm"
@@ -272,7 +265,6 @@ export default function Reves() {
             Partager
           </button>
 
-          {/* CONTINUER → FINAL */}
           <button
             onClick={() => router.push("/final")}
             className="px-3 bg-white/10 border border-white/10 rounded text-sm"
