@@ -14,20 +14,22 @@ export default function Reves() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 📥 charger les rêves
+  // 📥 charger initialement
   async function loadDreams() {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("dreams")
       .select("*")
       .order("created_at", { ascending: false });
 
-    setDreams(data || []);
+    if (!error) {
+      setDreams(data || []);
+    }
   }
 
   useEffect(() => {
     loadDreams();
 
-    // ⚡ REALTIME LIVE
+    // ⚡ REALTIME
     const channel = supabase
       .channel("dreams-live")
       .on(
@@ -38,10 +40,14 @@ export default function Reves() {
           table: "dreams",
         },
         (payload) => {
-          setDreams((current) => [
-            payload.new as Dream,
-            ...current,
-          ]);
+          const newDream = payload.new as Dream;
+
+          // ❌ éviter doublons (important)
+          setDreams((current) => {
+            const exists = current.find((d) => d.id === newDream.id);
+            if (exists) return current;
+            return [newDream, ...current];
+          });
         }
       )
       .subscribe();
@@ -51,22 +57,38 @@ export default function Reves() {
     };
   }, []);
 
-  // ✍️ publier
+  // ✍️ AJOUT (optimistic UI + Supabase)
   async function addDream() {
     if (!input.trim()) return;
 
+    const text = input;
+
+    // ⚡ affichage immédiat
+    const tempId = crypto.randomUUID();
+
+    const tempDream: Dream = {
+      id: tempId,
+      text,
+      created_at: new Date().toISOString(),
+    };
+
+    setDreams((prev) => [tempDream, ...prev]);
+    setInput("");
     setLoading(true);
 
+    // ⚡ envoi Supabase
     const { error } = await supabase.from("dreams").insert([
       {
-        text: input,
+        text,
       },
     ]);
 
     setLoading(false);
 
-    if (!error) {
-      setInput(""); // 👈 nettoyage input
+    // ❌ rollback si erreur
+    if (error) {
+      console.error(error);
+      setDreams((prev) => prev.filter((d) => d.id !== tempId));
     }
   }
 
@@ -74,18 +96,18 @@ export default function Reves() {
     <main className="h-screen flex flex-col bg-white">
 
       {/* TITRE */}
-      <header className="p-4 text-center border-b">
+      <header className="p-4 border-b text-center">
         <h1 className="text-2xl font-bold">RÊVES</h1>
       </header>
 
-      {/* LISTE (VERSION MOBILE COOL) */}
+      {/* LISTE (mobile clean) */}
       <section className="flex-1 overflow-y-auto px-3 py-3">
-        <div className="space-y-2 max-w-md mx-auto">
+        <div className="max-w-md mx-auto space-y-2">
 
           {dreams.map((d) => (
             <div
               key={d.id}
-              className="bg-gray-50 border rounded-xl p-3 text-sm shadow-sm"
+              className="p-3 text-sm border rounded-xl bg-gray-50 shadow-sm"
             >
               {d.text}
             </div>
@@ -94,7 +116,7 @@ export default function Reves() {
         </div>
       </section>
 
-      {/* INPUT BAS ÉCRAN MOBILE STYLE */}
+      {/* INPUT FIXE EN BAS */}
       <footer className="border-t p-3 bg-white">
         <div className="max-w-md mx-auto flex gap-2">
 
