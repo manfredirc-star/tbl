@@ -17,7 +17,7 @@ export default function Reves() {
 
   const router = useRouter();
 
-  // 📥 load initial
+  // 🌙 charger rêves
   async function loadDreams() {
     const { data } = await supabase
       .from("dreams")
@@ -30,6 +30,7 @@ export default function Reves() {
   useEffect(() => {
     loadDreams();
 
+    // ⚡ realtime
     const channel = supabase
       .channel("dreams-live")
       .on(
@@ -53,7 +54,7 @@ export default function Reves() {
     };
   }, []);
 
-  // ✨ partage
+  // ✨ partager rêve
   async function addDream() {
     if (!input.trim()) return;
 
@@ -66,7 +67,7 @@ export default function Reves() {
       created_at: new Date().toISOString(),
     };
 
-    // apparition instantanée
+    // apparition immédiate
     setDreams((prev) => [temp, ...prev]);
 
     setLoading(true);
@@ -83,21 +84,39 @@ export default function Reves() {
   }
 
   return (
-    <main className="h-screen flex flex-col bg-white">
+    <main className="h-screen flex flex-col relative overflow-hidden bg-black text-white">
+
+      {/* 🌫 FOND ONIRIQUE ANIMÉ */}
+      <div className="absolute inset-0 opacity-30 animate-pulse bg-gradient-to-b from-indigo-900 via-black to-purple-900" />
+
+      {/* ✨ PARTICULES RÊVE (simple illusion) */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute w-2 h-2 bg-white rounded-full opacity-10 animate-ping top-1/4 left-1/3" />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-10 animate-ping top-2/3 left-2/3" />
+        <div className="absolute w-1 h-1 bg-white rounded-full opacity-10 animate-ping top-1/2 left-1/4" />
+      </div>
 
       {/* TITRE */}
-      <header className="p-3 border-b text-center">
-        <h1 className="text-xl font-bold">RÊVES</h1>
+      <header className="relative z-10 p-3 text-center border-b border-white/10">
+        <h1 className="text-xl tracking-widest font-light">
+          RÊVES COLLECTIFS
+        </h1>
       </header>
 
-      {/* LISTE */}
-      <section className="flex-1 overflow-y-auto px-3 py-2">
+      {/* LISTE RÊVES */}
+      <section className="relative z-10 flex-1 overflow-y-auto px-3 py-3">
         <div className="max-w-md mx-auto space-y-2">
 
           {dreams.map((d) => (
             <div
               key={d.id}
-              className="p-2 text-sm border rounded-lg bg-gray-50"
+              className="
+                p-3 text-sm rounded-xl
+                bg-white/10 backdrop-blur-md
+                border border-white/10
+                transition-all duration-500
+                hover:scale-[1.02]
+              "
             >
               {d.text}
             </div>
@@ -106,36 +125,47 @@ export default function Reves() {
         </div>
       </section>
 
-      {/* INPUT FIXE */}
-      <footer className="fixed bottom-0 left-0 right-0 border-t bg-white p-2">
+      {/* INPUT FIXE ONIRIQUE */}
+      <footer className="relative z-10 fixed bottom-0 left-0 right-0 border-t border-white/10 bg-black/40 backdrop-blur-xl p-2">
         <div className="max-w-md mx-auto flex gap-2">
 
-          {/* 🌫 INPUT QUI “RESPIRE + FLOTTANT” */}
+          {/* INPUT VIVANT */}
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Écris ton rêve..."
             className="
-              flex-1 border rounded-lg p-2 text-sm resize-none
+              flex-1 p-2 text-sm rounded-xl resize-none
+              bg-white/10 text-white placeholder-white/40
+              border border-white/10
               transition-all duration-300
-              focus:scale-[1.02] focus:shadow-lg focus:ring-2 focus:ring-black
+              focus:scale-[1.03] focus:ring-2 focus:ring-purple-400
+              focus:bg-white/20
             "
             rows={2}
           />
 
-          {/* BOUTON PARTAGER */}
+          {/* PARTAGER */}
           <button
             onClick={addDream}
             disabled={loading}
-            className="px-3 bg-black text-white rounded-lg text-sm"
+            className="
+              px-3 rounded-xl text-sm
+              bg-purple-500/80 hover:bg-purple-400
+              transition-all
+            "
           >
             {loading ? "..." : "Partager"}
           </button>
 
-          {/* BOUTON CONTINUER */}
+          {/* CONTINUER */}
           <button
             onClick={() => router.push("/final")}
-            className="px-3 bg-gray-800 text-white rounded-lg text-sm"
+            className="
+              px-3 rounded-xl text-sm
+              bg-white/10 border border-white/10
+              hover:bg-white/20 transition-all
+            "
           >
             Continuer
           </button>
@@ -143,17 +173,14 @@ export default function Reves() {
         </div>
       </footer>
 
-      {/* 🌙 TEXTE FLOTTANT (EFFET ONIRIQUE) */}
+      {/* 💬 TEXTE QUI FLOTTÉ PENDANT L'ÉCRITURE */}
       {input && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 pointer-events-none">
-          <div className="text-sm text-gray-400 animate-bounce opacity-70">
+          <div className="text-white/40 text-sm animate-bounce">
             {input}
           </div>
         </div>
       )}
-
-      {/* espace bas */}
-      <div className="h-20" />
 
     </main>
   );
