@@ -43,48 +43,46 @@ export default function TestPage() {
     setStep((prev) => prev + 1);
   }
 
-  // 🧠 IA GRATUITE (LOCALE + MÉTAPHORIQUE)
-  function interpret(answers: string[]) {
-    const yes = answers.filter((a) => a === "oui").length;
+  // 🎲 PERSONNAGES ONIRIQUES
+  const characters = [
+    {
+      name: "BARNARD",
+      color: "from-indigo-500 to-purple-700",
+      text:
+        "Barnard est une anomalie administrative du rêve. Il classe les pensées des autres pendant qu’il oublie les siennes.",
+    },
+    {
+      name: "L’HOMME PLANTE",
+      color: "from-green-500 to-emerald-800",
+      text:
+        "Il pousse lentement dans les conversations. On raconte qu’il absorbe les silences pour survivre.",
+    },
+    {
+      name: "L’HOMME AMPOULE",
+      color: "from-yellow-400 to-orange-600",
+      text:
+        "Il s’allume quand quelqu’un doute. Son énergie dépend du niveau de confusion ambiant.",
+    },
+    {
+      name: "MADAME RÉVEIL",
+      color: "from-pink-500 to-red-600",
+      text:
+        "Elle sonne uniquement quand personne ne dort. Elle est le souvenir d’un monde qui refuse de commencer.",
+    },
+  ];
 
-    const messages = [
-      {
-        title: "SILENCE DES OBJETS",
-        text: "Les objets ont répondu mais ont oublié de te le dire.",
-      },
-      {
-        title: "CAFETIÈRE SUSPECTE",
-        text: "Un appareil domestique a été surpris en train de rêver de toi.",
-      },
-      {
-        title: "CONTAMINATION LÉGÈRE",
-        text: "Les plantes te regardent mais font semblant de ne pas comprendre.",
-      },
-      {
-        title: "RÉALITÉ INSTABLE",
-        text: "Tu es devenu une variable dans un système qui s’ennuie.",
-      },
-      {
-        title: "BARNARD LOOP ACTIF",
-        text: "Le monde te reconnaît comme une erreur intéressante.",
-      },
-    ];
-
-    if (yes === 0) return messages[0];
-    if (yes === 1) return messages[1];
-    if (yes === 2) return messages[2];
-    return messages[4];
-  }
-
-  const result = interpret(answers);
+  // 🎲 résultat ALÉATOIRE (change à chaque fin)
+  const [result] = useState(
+    () => characters[Math.floor(Math.random() * characters.length)]
+  );
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center text-white overflow-hidden bg-black">
 
-      {/* 🌌 BACKGROUND */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-indigo-950 to-black animate-pulse opacity-80" />
-
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white,_transparent_70%)] animate-pulse" />
+      {/* 🌌 BACKGROUND GLOBAL FIXE */}
+      <div
+        className={`absolute inset-0 bg-gradient-to-b ${result.color} opacity-30`}
+      />
 
       {/* BOOT */}
       {boot && (
@@ -102,6 +100,7 @@ export default function TestPage() {
           TEST DE CONTAMINATION ONYRIQUE
         </h1>
 
+        {/* BAR */}
         <div className="h-[1px] w-full bg-white/10 mb-8 overflow-hidden">
           <div className="h-full bg-white/60 animate-pulse w-1/2" />
         </div>
@@ -135,13 +134,18 @@ export default function TestPage() {
         ) : (
           <div className="space-y-6">
 
-            <h2 className="text-lg font-semibold animate-pulse">
-              {result.title}
-            </h2>
+            {/* 🌈 ÉCRAN FINAL COLORÉ STABLE */}
+            <div
+              className={`p-6 rounded-xl bg-gradient-to-br ${result.color} text-white shadow-lg`}
+            >
+              <h2 className="text-xl font-bold mb-3">
+                {result.name}
+              </h2>
 
-            <p className="text-white/70">
-              {result.text}
-            </p>
+              <p className="text-sm leading-relaxed opacity-90">
+                {result.text}
+              </p>
+            </div>
 
             <p className="text-white/60 mt-4">
               CONTAMINATION ONYRIQUE :
@@ -149,10 +153,6 @@ export default function TestPage() {
                 {percent}%
               </span>
             </p>
-
-            <div className="h-[1px] w-full bg-white/10 overflow-hidden">
-              <div className="h-full bg-white/70 animate-pulse w-full" />
-            </div>
 
             <button
               onClick={() => router.push("/reves")}
@@ -163,11 +163,7 @@ export default function TestPage() {
 
           </div>
         )}
-
       </div>
-
-      <div className="absolute inset-0 pointer-events-none opacity-10 bg-gradient-to-tr from-indigo-500 via-transparent to-purple-500 animate-pulse" />
-
     </main>
   );
 }
