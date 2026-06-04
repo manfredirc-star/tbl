@@ -14,17 +14,12 @@ export default function Reves() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔄 charger les rêves
+  // 📥 charger les rêves
   async function loadDreams() {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("dreams")
       .select("*")
       .order("created_at", { ascending: false });
-
-    if (error) {
-      console.log(error);
-      return;
-    }
 
     setDreams(data || []);
   }
@@ -32,7 +27,7 @@ export default function Reves() {
   useEffect(() => {
     loadDreams();
 
-    // 🔥 REALTIME
+    // ⚡ REALTIME LIVE
     const channel = supabase
       .channel("dreams-live")
       .on(
@@ -43,7 +38,10 @@ export default function Reves() {
           table: "dreams",
         },
         (payload) => {
-          setDreams((prev) => [payload.new as Dream, ...prev]);
+          setDreams((current) => [
+            payload.new as Dream,
+            ...current,
+          ]);
         }
       )
       .subscribe();
@@ -53,7 +51,7 @@ export default function Reves() {
     };
   }, []);
 
-  // ✍️ publier un rêve
+  // ✍️ publier
   async function addDream() {
     if (!input.trim()) return;
 
@@ -65,52 +63,58 @@ export default function Reves() {
       },
     ]);
 
-    if (error) {
-      console.log(error);
-      alert("Erreur: " + error.message);
-    } else {
-      setInput("");
-    }
-
     setLoading(false);
+
+    if (!error) {
+      setInput(""); // 👈 nettoyage input
+    }
   }
 
   return (
-    <main className="h-screen flex flex-col">
+    <main className="h-screen flex flex-col bg-white">
 
       {/* TITRE */}
-      <header className="p-6 border-b text-center text-3xl font-bold">
-        RÊVES
+      <header className="p-4 text-center border-b">
+        <h1 className="text-2xl font-bold">RÊVES</h1>
       </header>
 
-      {/* LISTE */}
-      <section className="flex-1 overflow-y-auto p-4 space-y-3">
-        {dreams.map((d) => (
-          <div
-            key={d.id}
-            className="p-4 border rounded bg-gray-50"
-          >
-            {d.text}
-          </div>
-        ))}
+      {/* LISTE (VERSION MOBILE COOL) */}
+      <section className="flex-1 overflow-y-auto px-3 py-3">
+        <div className="space-y-2 max-w-md mx-auto">
+
+          {dreams.map((d) => (
+            <div
+              key={d.id}
+              className="bg-gray-50 border rounded-xl p-3 text-sm shadow-sm"
+            >
+              {d.text}
+            </div>
+          ))}
+
+        </div>
       </section>
 
-      {/* INPUT EN BAS */}
-      <footer className="p-4 border-t flex gap-2">
-        <textarea
-          className="flex-1 border p-2 rounded"
-          placeholder="Écris ton rêve..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
+      {/* INPUT BAS ÉCRAN MOBILE STYLE */}
+      <footer className="border-t p-3 bg-white">
+        <div className="max-w-md mx-auto flex gap-2">
 
-        <button
-          onClick={addDream}
-          disabled={loading}
-          className="px-4 bg-black text-white rounded"
-        >
-          {loading ? "..." : "Envoyer"}
-        </button>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Écris ton rêve..."
+            className="flex-1 border rounded-xl p-2 text-sm resize-none"
+            rows={2}
+          />
+
+          <button
+            onClick={addDream}
+            disabled={loading}
+            className="px-4 bg-black text-white rounded-xl text-sm"
+          >
+            {loading ? "..." : "OK"}
+          </button>
+
+        </div>
       </footer>
 
     </main>
