@@ -68,7 +68,7 @@ export default function TestPage() {
             onClick={() => router.push("/reves")}
             className="px-6 py-3 bg-black text-white rounded"
           >
-            Rentrer dans le monde onirique
+            Rentrer dans le monde onyrique
           </button>
         </div>
       )}
