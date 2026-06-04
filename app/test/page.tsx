@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function TestPage() {
@@ -8,13 +8,37 @@ export default function TestPage() {
   const [answers, setAnswers] = useState<string[]>([]);
   const router = useRouter();
 
-  const [percent] = useState(() => Math.floor(Math.random() * 101));
+  const [percent, setPercent] = useState(0);
+  const finalPercent = Math.floor(Math.random() * 101);
 
   const questions = [
     "Les objets peuvent-ils se souvenir ?",
     "Les plantes vous observent-elles ?",
     "Une cafetière peut-elle mentir ?",
   ];
+
+  // 🌌 effet glitch d’entrée
+  const [boot, setBoot] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setBoot(false), 1200);
+    return () => clearTimeout(t);
+  }, []);
+
+  // 📊 animation du pourcentage
+  useEffect(() => {
+    if (step === questions.length) {
+      let current = 0;
+      const interval = setInterval(() => {
+        current += 2;
+        if (current >= finalPercent) {
+          current = finalPercent;
+          clearInterval(interval);
+        }
+        setPercent(current);
+      }, 25);
+    }
+  }, [step]);
 
   function answer(value: string) {
     setAnswers((prev) => [...prev, value]);
@@ -24,18 +48,32 @@ export default function TestPage() {
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center text-white overflow-hidden bg-black">
 
-      {/* 🌌 BACKGROUND ONIRIQUE */}
+      {/* 🌌 BACKGROUND VIVANT */}
       <div className="absolute inset-0 bg-gradient-to-b from-black via-indigo-950 to-black animate-pulse opacity-80" />
 
-      {/* 🌫 bruit / instabilité */}
+      {/* 🌫 bruit instable */}
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white,_transparent_70%)] animate-pulse" />
+
+      {/* ⚡ GLITCH BOOT */}
+      {boot && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black z-50">
+          <p className="text-white/70 tracking-widest animate-pulse">
+            synchronisation onirique...
+          </p>
+        </div>
+      )}
 
       {/* CONTENU */}
       <div className="relative z-10 w-full max-w-md">
 
         <h1 className="text-xl tracking-widest font-bold mb-10">
-          TEST DE CONTAMINATION ONIRIQUE
+          TEST DE CONTAMINATION ONYRIQUE
         </h1>
+
+        {/* 📊 SCAN BAR */}
+        <div className="h-[1px] w-full bg-white/10 mb-8 overflow-hidden">
+          <div className="h-full bg-white/60 animate-pulse w-1/2" />
+        </div>
 
         {step < questions.length ? (
           <>
@@ -66,7 +104,7 @@ export default function TestPage() {
         ) : (
           <div className="space-y-6">
 
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-lg font-semibold animate-pulse">
               Analyse terminée
             </h2>
 
@@ -76,6 +114,10 @@ export default function TestPage() {
                 {percent}%
               </span>
             </p>
+
+            <div className="h-[1px] w-full bg-white/10 overflow-hidden">
+              <div className="h-full bg-white/70 animate-pulse w-full" />
+            </div>
 
             <button
               onClick={() => router.push("/reves")}
