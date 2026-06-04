@@ -2,71 +2,87 @@
 
 export default function FinalPage() {
 
-  function goToAignon() {
+  function openAignon() {
     window.open("https://aignon.com", "_blank");
   }
 
+  function share() {
+    const text =
+      "J’ai trouvé un message étrange lié à Barnard. Je crois que ça doit être vu par quelqu’un qui rêve encore.";
+
+    if (navigator.share) {
+      navigator.share({
+        title: "Barnard Loop",
+        text,
+        url: window.location.origin,
+      });
+    } else {
+      navigator.clipboard.writeText(text + " " + window.location.origin);
+      alert("Message copié");
+    }
+  }
+
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center text-center p-6 text-white bg-black overflow-hidden">
+    <main className="relative flex min-h-screen flex-col items-center justify-center text-center p-6 bg-black text-white overflow-hidden">
 
-      {/* 🌌 BACKGROUND CINÉ */}
+      {/* 🌌 fond vivant doux */}
       <div className="absolute inset-0 bg-gradient-to-b from-black via-indigo-950 to-black opacity-90" />
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white,_transparent_70%)]" />
+      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white,_transparent_70%)] animate-pulse" />
 
-      {/* CONTENU */}
-      <div className="relative z-10 max-w-md space-y-6">
+      {/* contenu */}
+      <div className="relative z-10 max-w-lg space-y-8">
 
-        {/* TITRE IMPACT */}
+        {/* titre étrange */}
         <h1 className="text-2xl font-bold tracking-widest">
-          TU ES ARRIVÉ AU BORD DU RÊVE
+          quelqu’un a laissé un rêve ici
         </h1>
 
-        <p className="text-white/70 text-sm leading-relaxed">
-          Barnard n’est pas coincé.  
-          Il est en représentation.
+        <p className="text-white/70 leading-relaxed">
+          Barnard n’est pas un personnage.  
+          C’est ce qui arrive quand plusieurs rêves essaient de parler en même temps.
         </p>
 
         <p className="text-white/60 text-sm">
-          Ce que tu viens de vivre fait partie du spectacle  
-          “Barnard Loop” — une expérience théâtrale immersive.
+          parfois il s’écrit dans les interfaces.  
+          parfois il se glisse dans les décisions des gens qui hésitent trop longtemps.
         </p>
 
-        {/* BLOQUE EMOTIONNEL */}
+        {/* bloc poétique */}
         <div className="p-6 rounded-xl bg-gradient-to-br from-indigo-600 via-purple-700 to-black shadow-xl">
 
-          <p className="text-white/90 text-sm leading-relaxed">
-            Tu n’as pas répondu à un test.  
-            Tu as déjà commencé la pièce.
+          <p className="text-sm text-white/90 leading-relaxed">
+            si tu es arrivé ici, c’est probablement que quelqu’un que tu connais
+            aurait dû voir ce message aussi.
           </p>
 
         </div>
 
-        {/* CTA PRINCIPAL */}
+        {/* CTA principal doux */}
         <button
-          onClick={goToAignon}
-          className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:scale-105 transition"
+          onClick={openAignon}
+          className="px-6 py-3 bg-white text-black rounded-xl font-semibold hover:scale-105 transition"
         >
-          Acheter mon billet sur Aignon
+          voir les dates du spectacle
         </button>
 
-        {/* CTA SECONDAIRE */}
+        {/* CTA viral */}
         <button
-          onClick={goToAignon}
-          className="text-sm text-white/60 underline hover:text-white"
+          onClick={share}
+          className="block mx-auto text-sm text-white/60 underline hover:text-white"
         >
-          Voir les dates du spectacle
+          envoyer à quelqu’un qui rêve souvent
         </button>
 
-        {/* MICRO TEXTE */}
-        <p className="text-xs text-white/40 mt-6">
-          expérience théâtrale — Avignon / tournée
+        {/* micro phrase */}
+        <p className="text-xs text-white/30">
+          barnard loop — performance vivante / avignon / tournée
         </p>
 
       </div>
 
-      {/* AMBIANCE */}
+      {/* signature invisible */}
       <div className="absolute bottom-6 text-xs text-white/20 tracking-widest">
-        barnard loop // you are inside
+        si tu comprends, tu es déjà dedans
       </div>
 
     </main>
