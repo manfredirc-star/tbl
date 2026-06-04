@@ -2,73 +2,72 @@
 
 export default function FinalPage() {
 
-  const shareData = {
-    title: "Barnard",
-    text: "Barnard est coincé dans une boucle onirique à Avignon. Aide-le à s'en sortir.",
-    url: typeof window !== "undefined" ? window.location.origin : "",
-  };
-
-  async function handleShare() {
-    // 📱 Mobile natif (Instagram, WhatsApp, etc.)
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (err) {
-        console.log("Share cancelled");
-      }
-    } else {
-      // 💻 fallback : copier lien
-      await navigator.clipboard.writeText(shareData.url);
-      alert("Lien copié !");
-    }
+  function goToAignon() {
+    window.open("https://aignon.com", "_blank");
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center text-center p-6">
+    <main className="relative flex min-h-screen flex-col items-center justify-center text-center p-6 text-white bg-black overflow-hidden">
 
-      {/* 🧠 TITRE */}
-      <h1 className="text-2xl font-bold mb-6">
-        Barnard est coincé dans une boucle onirique à Avignon.
-      </h1>
+      {/* 🌌 BACKGROUND CINÉ */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black via-indigo-950 to-black opacity-90" />
+      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white,_transparent_70%)]" />
 
-      <h2 className="text-lg mb-6">
-        Il pense que chaque jour est lundi.
-      </h2>
+      {/* CONTENU */}
+      <div className="relative z-10 max-w-md space-y-6">
 
-      <h2 className="text-lg mb-6">
-        Même le jeudi.
-      </h2>
+        {/* TITRE IMPACT */}
+        <h1 className="text-2xl font-bold tracking-widest">
+          TU ES ARRIVÉ AU BORD DU RÊVE
+        </h1>
 
-      {/* ⚠️ EXPLICATION */}
-      <p className="text-lg mb-6">
-        La seule façon de le réveiller, c’est de partager ce message.
-      </p>
+        <p className="text-white/70 text-sm leading-relaxed">
+          Barnard n’est pas coincé.  
+          Il est en représentation.
+        </p>
 
-      {/* 🔥 BOUTON VIRAL */}
-      <button
-        onClick={handleShare}
-        className="px-6 py-3 bg-black text-white rounded mb-10"
-      >
-        Partager le signal
-      </button>
+        <p className="text-white/60 text-sm">
+          Ce que tu viens de vivre fait partie du spectacle  
+          “Barnard Loop” — une expérience théâtrale immersive.
+        </p>
 
-      {/* 📡 INSTRUCTION SOCIALE */}
-      <p className="text-md text-gray-600 mb-10">
-        Envoie ça à quelqu’un, on teste un truc.
-      </p>
+        {/* BLOQUE EMOTIONNEL */}
+        <div className="p-6 rounded-xl bg-gradient-to-br from-indigo-600 via-purple-700 to-black shadow-xl">
 
-      <p className="text-md text-gray-600 mb-10">
-        Bonne chance.
-      </p>
+          <p className="text-white/90 text-sm leading-relaxed">
+            Tu n’as pas répondu à un test.  
+            Tu as déjà commencé la pièce.
+          </p>
 
-      <p className="text-md text-gray-600 mb-10">
-        Barnard compte sur toi.
-      </p>
+        </div>
 
-      {/* 🌙 FIN */}
-      <p className="text-sm text-gray-400">
-        Bonne nuit.
-      </p>
+        {/* CTA PRINCIPAL */}
+        <button
+          onClick={goToAignon}
+          className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:scale-105 transition"
+        >
+          Acheter mon billet sur Aignon
+        </button>
+
+        {/* CTA SECONDAIRE */}
+        <button
+          onClick={goToAignon}
+          className="text-sm text-white/60 underline hover:text-white"
+        >
+          Voir les dates du spectacle
+        </button>
+
+        {/* MICRO TEXTE */}
+        <p className="text-xs text-white/40 mt-6">
+          expérience théâtrale — Avignon / tournée
+        </p>
+
+      </div>
+
+      {/* AMBIANCE */}
+      <div className="absolute bottom-6 text-xs text-white/20 tracking-widest">
+        barnard loop // you are inside
+      </div>
 
     </main>
   );
