@@ -24,6 +24,7 @@ export default function TestPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
+      
       <h1 className="text-2xl font-bold mb-8">
         TEST DE CONTAMINATION ONYRIQUE
       </h1>
@@ -64,10 +65,10 @@ export default function TestPage() {
           </p>
 
           <button
-            onClick={() => router.push("/journal")}
+            onClick={() => router.push("/reves")}
             className="px-6 py-3 bg-black text-white rounded"
           >
-            Accéder au journal
+            Rentrer dans le monde onirique
           </button>
         </div>
       )}
