@@ -26,7 +26,10 @@ export default function Reves() {
   const [comments, setComments] = useState<Comment[]>([]);
 
   const [input, setInput] = useState("");
-  const [commentInput, setCommentInput] = useState("");
+
+  // ✅ FIX IMPORTANT : input par commentaire (plus de bug global)
+  const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
+
   const [activeComment, setActiveComment] = useState<string | null>(null);
 
   // =====================
@@ -59,7 +62,11 @@ export default function Reves() {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "dreams" },
         (payload) => {
-          setDreams((prev) => [payload.new as Dream, ...prev]);
+          setDreams((prev) => {
+            const exists = prev.find((d) => d.id === payload.new.id);
+            if (exists) return prev;
+            return [payload.new as Dream, ...prev];
+          });
         }
       )
 
@@ -79,7 +86,11 @@ export default function Reves() {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "dream_comments" },
         (payload) => {
-          setComments((prev) => [...prev, payload.new as Comment]);
+          setComments((prev) => {
+            const exists = prev.find((c) => c.id === payload.new.id);
+            if (exists) return prev;
+            return [...prev, payload.new as Comment];
+          });
         }
       )
 
@@ -128,28 +139,48 @@ export default function Reves() {
   }
 
   // =====================
-  // COMMENT / REPLY (THREADS)
+  // COMMENT FIX (INPUT PAR ID)
   // =====================
+  function setInput(id: string, value: string) {
+    setCommentInputs((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  }
+
   async function sendComment(
     dreamId: string,
     parentId: string | null = null
   ) {
-    if (!commentInput.trim()) return;
+    const text = commentInputs[parentId ?? dreamId];
 
-    await supabase.from("dream_comments").insert([
-      {
-        dream_id: dreamId,
-        parent_id: parentId,
-        text: commentInput,
-      },
-    ]);
+    if (!text || !text.trim()) return;
 
-    setCommentInput("");
+    const { error } = await supabase
+      .from("dream_comments")
+      .insert([
+        {
+          dream_id: dreamId,
+          parent_id: parentId,
+          text,
+        },
+      ]);
+
+    if (error) {
+      console.log("COMMENT ERROR:", error);
+      return;
+    }
+
+    setCommentInputs((prev) => ({
+      ...prev,
+      [parentId ?? dreamId]: "",
+    }));
+
     setActiveComment(null);
   }
 
   // =====================
-  // RECURSIVE RENDER
+  // RENDER COMMENTS (RECURSIF STABLE)
   // =====================
   function renderComments(
     dreamId: string,
@@ -179,9 +210,9 @@ export default function Reves() {
           {activeComment === c.id && (
             <div className="flex gap-1 mt-1">
               <input
-                value={commentInput}
+                value={commentInputs[c.id] || ""}
                 onChange={(e) =>
-                  setCommentInput(e.target.value)
+                  setInput(c.id, e.target.value)
                 }
                 className="text-xs bg-white/10 p-1 rounded flex-1"
                 placeholder="réponse..."
@@ -198,7 +229,6 @@ export default function Reves() {
             </div>
           )}
 
-          {/* RECURSION */}
           {renderComments(dreamId, c.id)}
         </div>
       ));
@@ -244,7 +274,6 @@ export default function Reves() {
               </button>
             </div>
 
-            {/* COMMENTS TREE */}
             <div className="mt-2">
               {renderComments(d.id)}
             </div>
