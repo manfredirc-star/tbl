@@ -27,12 +27,18 @@ export default function Reves() {
 
   const [dreamInput, setDreamInput] = useState("");
 
-  // input par commentaire (IMPORTANT)
+  // input par commentaire
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>(
     {}
   );
 
-  const [activeComment, setActiveComment] = useState<string | null>(null);
+  // 2 states séparés = IMPORTANT
+  const [activeDreamComment, setActiveDreamComment] = useState<string | null>(
+    null
+  );
+  const [activeReplyComment, setActiveReplyComment] = useState<string | null>(
+    null
+  );
 
   // =====================
   // LOAD DATA
@@ -60,20 +66,14 @@ export default function Reves() {
     const channel = supabase
       .channel("reves-live")
 
-      // DREAMS INSERT
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "dreams" },
         (payload) => {
-          setDreams((prev) => {
-            const exists = prev.find((d) => d.id === payload.new.id);
-            if (exists) return prev;
-            return [payload.new as Dream, ...prev];
-          });
+          setDreams((prev) => [payload.new as Dream, ...prev]);
         }
       )
 
-      // DREAMS UPDATE (likes)
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "dreams" },
@@ -86,7 +86,6 @@ export default function Reves() {
         }
       )
 
-      // COMMENTS INSERT
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "dream_comments" },
@@ -107,7 +106,7 @@ export default function Reves() {
   }, []);
 
   // =====================
-  // ADD DREAM
+  // DREAM
   // =====================
   async function addDream() {
     if (!dreamInput.trim()) return;
@@ -122,9 +121,6 @@ export default function Reves() {
     setDreamInput("");
   }
 
-  // =====================
-  // LIKE DREAM
-  // =====================
   async function likeDream(id: string) {
     const dream = dreams.find((d) => d.id === id);
     if (!dream) return;
@@ -135,14 +131,11 @@ export default function Reves() {
       prev.map((d) => (d.id === id ? { ...d, likes: newLikes } : d))
     );
 
-    await supabase
-      .from("dreams")
-      .update({ likes: newLikes })
-      .eq("id", id);
+    await supabase.from("dreams").update({ likes: newLikes }).eq("id", id);
   }
 
   // =====================
-  // COMMENT INPUT HANDLING
+  // COMMENT SYSTEM FIXED
   // =====================
   function setCommentInput(id: string, value: string) {
     setCommentInputs((prev) => ({
@@ -169,11 +162,11 @@ export default function Reves() {
     ]);
 
     setCommentInputs((prev) => ({ ...prev, [key]: "" }));
-    setActiveComment(null);
+    setActiveReplyComment(null);
   }
 
   // =====================
-  // RECURSIVE COMMENTS
+  // RENDER COMMENTS TREE
   // =====================
   function renderComments(
     dreamId: string,
@@ -192,12 +185,16 @@ export default function Reves() {
 
           <button
             className="text-[10px] text-white/50 mt-1"
-            onClick={() => setActiveComment(c.id)}
+            onClick={() =>
+              setActiveReplyComment(
+                activeReplyComment === c.id ? null : c.id
+              )
+            }
           >
             répondre
           </button>
 
-          {activeComment === c.id && (
+          {activeReplyComment === c.id && (
             <div className="flex gap-1 mt-1">
               <input
                 value={commentInputs[c.id] || ""}
@@ -249,8 +246,8 @@ export default function Reves() {
 
               <button
                 onClick={() =>
-                  setActiveComment(
-                    activeComment === d.id ? null : d.id
+                  setActiveDreamComment(
+                    activeDreamComment === d.id ? null : d.id
                   )
                 }
                 className="bg-white/10 px-2 py-1 rounded"
@@ -258,6 +255,26 @@ export default function Reves() {
                 💬 commenter
               </button>
             </div>
+
+            {activeDreamComment === d.id && (
+              <div className="flex gap-2 mt-2">
+                <input
+                  value={commentInputs[d.id] || ""}
+                  onChange={(e) =>
+                    setCommentInput(d.id, e.target.value)
+                  }
+                  placeholder="écrire un commentaire..."
+                  className="flex-1 text-xs p-2 bg-white/10 rounded"
+                />
+
+                <button
+                  onClick={() => sendComment(d.id, null)}
+                  className="text-xs px-2 bg-purple-500 rounded"
+                >
+                  envoyer
+                </button>
+              </div>
+            )}
 
             <div className="mt-2">
               {renderComments(d.id)}
