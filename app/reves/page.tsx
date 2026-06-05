@@ -11,7 +11,7 @@ type Dream = {
   likes: number;
 };
 
-type Reply = {
+type Comment = {
   id: string;
   dream_id: string;
   text: string;
@@ -22,49 +22,46 @@ export default function Reves() {
   const router = useRouter();
 
   const [dreams, setDreams] = useState<Dream[]>([]);
-  const [replies, setReplies] = useState<Reply[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
+
   const [input, setInput] = useState("");
-  const [replyInput, setReplyInput] = useState("");
-  const [activeReply, setActiveReply] = useState<string | null>(null);
+  const [commentInput, setCommentInput] = useState("");
+  const [activeComment, setActiveComment] = useState<string | null>(null);
 
-  // =========================
-  // 📥 LOAD FROM SUPABASE (SOURCE OF TRUTH)
-  // =========================
-
+  // =====================
+  // LOAD
+  // =====================
   async function loadAll() {
-    const [{ data: dreamsData }, { data: repliesData }] = await Promise.all([
-      supabase.from("dreams").select("*").order("created_at", { ascending: false }),
-      supabase.from("dream_replies").select("*").order("created_at", { ascending: true }),
+    const [{ data: dreamsData }, { data: commentsData }] = await Promise.all([
+      supabase
+        .from("dreams")
+        .select("*")
+        .order("created_at", { ascending: false }),
+
+      supabase
+        .from("dream_comments")
+        .select("*")
+        .order("created_at", { ascending: true }),
     ]);
 
     if (dreamsData) setDreams(dreamsData);
-    if (repliesData) setReplies(repliesData);
+    if (commentsData) setComments(commentsData);
   }
 
   useEffect(() => {
     loadAll();
 
-    // =========================
-    // ⚡ REALTIME SYNC
-    // =========================
-
     const channel = supabase
       .channel("dreams-live")
 
-      // NEW DREAM
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "dreams" },
         (payload) => {
-          setDreams((prev) => {
-            const exists = prev.find((d) => d.id === payload.new.id);
-            if (exists) return prev;
-            return [payload.new as Dream, ...prev];
-          });
+          setDreams((prev) => [payload.new as Dream, ...prev]);
         }
       )
 
-      // UPDATE DREAM (LIKES)
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "dreams" },
@@ -77,12 +74,11 @@ export default function Reves() {
         }
       )
 
-      // NEW REPLY
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "dream_replies" },
+        { event: "INSERT", schema: "public", table: "dream_comments" },
         (payload) => {
-          setReplies((prev) => [...prev, payload.new as Reply]);
+          setComments((prev) => [...prev, payload.new as Comment]);
         }
       )
 
@@ -93,90 +89,75 @@ export default function Reves() {
     };
   }, []);
 
-  // =========================
-  // ✨ ADD DREAM (ONLY DB IS TRUSTED)
-  // =========================
-
+  // =====================
+  // ADD DREAM
+  // =====================
   async function addDream() {
     if (!input.trim()) return;
 
-    const text = input;
-    setInput("");
-
     await supabase.from("dreams").insert([
       {
-        text,
+        text: input,
         likes: 0,
       },
     ]);
+
+    setInput("");
   }
 
-  // =========================
-  // ❤️ LIKE (ROBUST + PERSISTENT)
-  // =========================
-
+  // =====================
+  // LIKE
+  // =====================
   async function likeDream(id: string) {
     const dream = dreams.find((d) => d.id === id);
     if (!dream) return;
 
     const newLikes = (dream.likes || 0) + 1;
 
-    // UI optimiste
     setDreams((prev) =>
       prev.map((d) =>
         d.id === id ? { ...d, likes: newLikes } : d
       )
     );
 
-    const { error } = await supabase
+    await supabase
       .from("dreams")
       .update({ likes: newLikes })
       .eq("id", id);
-
-    if (error) {
-      // rollback si problème
-      loadAll();
-    }
   }
 
-  // =========================
-  // 💬 CONTINUE DREAM (NE PERD PLUS RIEN)
-  // =========================
+  // =====================
+  // COMMENT
+  // =====================
+  async function sendComment(dreamId: string) {
+    if (!commentInput.trim()) return;
 
-  async function sendReply(dreamId: string) {
-    if (!replyInput.trim()) return;
-
-    const text = replyInput;
-    setReplyInput("");
-    setActiveReply(null);
-
-    await supabase.from("dream_replies").insert([
+    await supabase.from("dream_comments").insert([
       {
         dream_id: dreamId,
-        text,
+        text: commentInput,
       },
     ]);
+
+    setCommentInput("");
+    setActiveComment(null);
   }
 
-  // =========================
+  // =====================
   // UI
-  // =========================
-
+  // =====================
   return (
-    <main className="h-screen flex flex-col bg-black text-white relative overflow-hidden">
-
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 bg-gradient-to-b from-indigo-950 via-black to-purple-950 opacity-80" />
+    <main className="h-screen flex flex-col bg-black text-white">
 
       {/* HEADER */}
-      <header className="relative z-10 p-3 text-center border-b border-white/10">
+      <header className="p-3 text-center border-b border-white/10">
         <h1 className="text-xs tracking-[0.3em]">
-          RÊVES COLLECTIFS EN DIRECT
+          RÊVES COLLECTIFS
         </h1>
       </header>
 
-      {/* LIST */}
-      <section className="relative z-10 flex-1 overflow-y-auto p-3 pb-24 space-y-3">
+      {/* FEED */}
+      <section className="flex-1 overflow-y-auto p-3 space-y-3 pb-24">
 
         {dreams.map((d) => (
           <div
@@ -185,52 +166,46 @@ export default function Reves() {
           >
             <p className="text-sm mb-2">{d.text}</p>
 
-            <div className="flex justify-between items-center text-xs">
-
-              <button
-                onClick={() => likeDream(d.id)}
-                className="active:scale-95 transition"
-              >
+            <div className="flex justify-between text-xs">
+              <button onClick={() => likeDream(d.id)}>
                 ❤️ {d.likes}
               </button>
 
               <button
                 onClick={() =>
-                  setActiveReply(activeReply === d.id ? null : d.id)
+                  setActiveComment(activeComment === d.id ? null : d.id)
                 }
                 className="bg-white/10 px-2 py-1 rounded"
               >
-                continuer
+                💬 commenter
               </button>
-
             </div>
 
-            {/* REPLIES */}
+            {/* COMMENTS */}
             <div className="mt-2 space-y-1">
-              {replies
-                .filter((r) => r.dream_id === d.id)
-                .map((r) => (
+              {comments
+                .filter((c) => c.dream_id === d.id)
+                .map((c) => (
                   <div
-                    key={r.id}
+                    key={c.id}
                     className="text-xs bg-black/40 p-2 rounded"
                   >
-                    {r.text}
+                    {c.text}
                   </div>
                 ))}
             </div>
 
-            {/* INPUT REPLY */}
-            {activeReply === d.id && (
+            {/* INPUT COMMENT */}
+            {activeComment === d.id && (
               <div className="mt-2 flex gap-2">
                 <input
-                  value={replyInput}
-                  onChange={(e) => setReplyInput(e.target.value)}
-                  placeholder="continuer le rêve..."
+                  value={commentInput}
+                  onChange={(e) => setCommentInput(e.target.value)}
+                  placeholder="continuer ce rêve..."
                   className="flex-1 text-xs p-2 rounded bg-white/10"
                 />
-
                 <button
-                  onClick={() => sendReply(d.id)}
+                  onClick={() => sendComment(d.id)}
                   className="text-xs px-2 bg-purple-500 rounded"
                 >
                   OK
@@ -239,12 +214,11 @@ export default function Reves() {
             )}
           </div>
         ))}
-
       </section>
 
-      {/* INPUT */}
-      <footer className="relative z-10 p-2 border-t border-white/10 bg-black/70 backdrop-blur-md">
-        <div className="flex gap-2 max-w-md mx-auto">
+      {/* INPUT DREAM */}
+      <footer className="p-2 border-t border-white/10 bg-black/70 backdrop-blur-md">
+        <div className="flex gap-2">
 
           <input
             value={input}
