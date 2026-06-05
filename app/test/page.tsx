@@ -4,43 +4,44 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function TestPage() {
-  const [step, setStep] = useState(0);
   const router = useRouter();
+
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState<string[]>([]);
+  const [boot, setBoot] = useState(true);
 
   const [percent, setPercent] = useState(0);
   const finalPercent = Math.floor(Math.random() * 101);
 
-  const [boot, setBoot] = useState(true);
-
-  // 🎲 QUESTIONS (POOL + RANDOM PICK 5)
+  // 🌙 QUESTIONS (IA MIX)
   const allQuestions = [
-    "Les objets rêvent-ils quand personne ne les regarde ?",
-    "As-tu déjà entendu un mur respirer ?",
-    "Une cafetière peut-elle te juger silencieusement ?",
-    "Tu as dormi cette nuit ou tu as juste cligné des yeux dans le futur ?",
-    "Le sucre te reconnaît-il quand tu le touches ?",
-    "Les rêves ont-ils un GPS ou ils se perdent volontairement ?",
-    "Ton oreiller te raconte-t-il des secrets le matin ?",
-    "Si tu fermes les yeux, est-ce que quelqu’un prend ta place ?",
-    "Les escaliers montent-ils aussi les pensées ?",
-    "Est-ce que ton reflet a déjà refusé de te suivre ?",
-    "Tu préfères le sucre ou le chaos doux du matin ?",
-    "Une chaise pense-t-elle à s’enfuir parfois ?",
-    "Les rêves peuvent-ils mentir pour survivre ?",
-    "As-tu déjà oublié un rêve pendant qu’il te regardait partir ?"
+    "Les objets que tu touches se souviennent-ils de toi ?",
+    "As-tu déjà rêvé sans t’en rendre compte ?",
+    "Le sucre t’appartient-il ou t’utilise-t-il ?",
+    "Une cafetière peut-elle falsifier un souvenir ?",
+    "Tu as dormi cette nuit ou tu as été remplacé brièvement ?",
+    "Est-ce que tes pensées ont une odeur ?",
+    "Quand tu fermes les yeux, qui continue de regarder ?",
+    "As-tu déjà oublié quelque chose qui insistait pour exister ?",
+    "Les murs de ta chambre changent-ils quand tu mens ?",
+    "Est-ce que ton prénom te reconnaît encore ?"
   ];
 
-  // shuffle + pick 5
-  const [questions] = useState(() => {
-    return [...allQuestions]
+  const [questions] = useState(() =>
+    [...allQuestions]
       .sort(() => Math.random() - 0.5)
-      .slice(0, 5);
-  });
+      .slice(0, 5)
+  );
 
   useEffect(() => {
     const t = setTimeout(() => setBoot(false), 1200);
     return () => clearTimeout(t);
   }, []);
+
+  function answer(value: string) {
+    setAnswers((prev) => [...prev, value]);
+    setStep((prev) => prev + 1);
+  }
 
   useEffect(() => {
     if (step === questions.length) {
@@ -52,78 +53,78 @@ export default function TestPage() {
           clearInterval(interval);
         }
         setPercent(current);
-      }, 25);
+      }, 20);
     }
   }, [step]);
 
-  function answer() {
-    setStep((prev) => prev + 1);
+  // 🧠 IA HALLUCINATION ENGINE
+  function generateNarrative() {
+    const hasYes = answers.filter(a => a === "oui").length;
+    const hasNo = answers.filter(a => a === "non").length;
+
+    const fragments = [
+      "l’IA hésite à te reconnaître comme humain stable",
+      "un clown administratif a validé ton existence partielle",
+      "la souris confirme avoir déjà vu ton rêve en double exemplaire",
+      "le lit qui grince affirme que tu n’as jamais vraiment quitté la chambre",
+      "Barnard te range dans un dossier intitulé : ‘peut-être réel’",
+      "une version de toi continue le test sans toi",
+      "tu es probablement encore en train de répondre ailleurs",
+      "tes réponses ont modifié la texture du monde"
+    ];
+
+    const selected = fragments
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 4 + hasYes);
+
+    return selected.join(". ");
   }
 
-  // 🎭 PERSONNAGES (EXPANDUS + PLUS DRÔLES)
-  const characters = [
-    {
-      name: "BARNARD",
-      color: "from-indigo-500 to-purple-700",
-      text:
-        "Barnard classe les rêves des autres dans des dossiers qu’il oublie immédiatement. Il est très organisé émotionnellement mais complètement perdu dans le réel.",
-    },
-    {
-      name: "LE CLOWN ADMINISTRATIF",
-      color: "from-pink-500 to-orange-600",
-      text:
-        "Il tamponne les émotions avec sérieux. Il rit uniquement quand personne ne regarde. Il pense être un formulaire officiel du rêve.",
-    },
-    {
-      name: "LA SOURIS QUI SAIT TOUT",
-      color: "from-gray-400 to-gray-700",
-      text:
-        "Elle connaît tous les rêves mais refuse de les répéter correctement. Elle vit sous les idées des gens et mange les pensées en trop.",
-    },
-    {
-      name: "LE LIT QUI GRINCE",
-      color: "from-yellow-600 to-amber-800",
-      text:
-        "Il parle la nuit en craquant. Chaque bruit est une phrase qu’on ne comprend qu’en dormant mal.",
-    },
-    {
-      name: "MADAME RÉVEIL",
-      color: "from-pink-500 to-red-600",
-      text:
-        "Elle sonne uniquement dans les mondes qui hésitent trop longtemps. Elle est fatiguée de réveiller des gens qui ne partent jamais.",
-    }
-  ];
+  function generateEntity() {
+    const base = [
+      "BARNARD",
+      "LE CLOWN ADMINISTRATIF",
+      "LA SOURIS QUI SAIT TOUT",
+      "LE LIT QUI GRINCE",
+      "MADAME RÉVEIL"
+    ];
 
-  const [result] = useState(
-    () => characters[Math.floor(Math.random() * characters.length)]
-  );
+    // fusion hallucination
+    const fusion = [
+      "BARNARD + CLOWN = responsable des rêves perdus",
+      "SOURIS + LIT = gardienne des micro-réveils",
+      "RÉVEIL + BARNARD = erreur système consciente"
+    ];
+
+    return Math.random() > 0.5
+      ? base[Math.floor(Math.random() * base.length)]
+      : fusion[Math.floor(Math.random() * fusion.length)];
+  }
+
+  const entity = generateEntity();
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center text-white overflow-hidden bg-black">
+    <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center text-white bg-black overflow-hidden">
 
-      {/* BACKGROUND */}
-      <div className={`absolute inset-0 bg-gradient-to-b ${result.color} opacity-30`} />
+      {/* BACKGROUND INSTABLE */}
+      <div className="absolute inset-0 bg-gradient-to-b from-indigo-900 via-black to-purple-900 opacity-40 animate-pulse" />
 
       {/* BOOT */}
       {boot && (
         <div className="absolute inset-0 flex items-center justify-center bg-black z-50">
-          <p className="text-white/70 tracking-widest animate-pulse">
-            synchronisation onirique...
+          <p className="text-white/60 tracking-widest animate-pulse">
+            recalibration de ta réalité...
           </p>
         </div>
       )}
 
-      <div className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 max-w-md w-full">
 
-        <h1 className="text-xl tracking-widest font-bold mb-10">
-          TEST DE CONTAMINATION ONYRIQUE
+        <h1 className="text-lg tracking-widest mb-8">
+          IA HALLUCINATION TEST
         </h1>
 
-        {/* PROGRESS BAR */}
-        <div className="h-[1px] w-full bg-white/10 mb-8 overflow-hidden">
-          <div className="h-full bg-white/60 animate-pulse w-1/2" />
-        </div>
-
+        {/* QUESTIONS */}
         {step < questions.length ? (
           <>
             <p className="text-lg mb-8 text-white/90">
@@ -132,14 +133,14 @@ export default function TestPage() {
 
             <div className="flex gap-4 justify-center">
               <button
-                onClick={answer}
+                onClick={() => answer("oui")}
                 className="px-6 py-3 border border-white/40 rounded hover:bg-white hover:text-black transition"
               >
                 Oui
               </button>
 
               <button
-                onClick={answer}
+                onClick={() => answer("non")}
                 className="px-6 py-3 border border-white/20 text-white/70 rounded hover:bg-white hover:text-black transition"
               >
                 Non
@@ -149,25 +150,31 @@ export default function TestPage() {
         ) : (
           <div className="space-y-6">
 
-            <div className={`p-6 rounded-xl bg-gradient-to-br ${result.color} text-white shadow-lg`}>
-              <h2 className="text-xl font-bold mb-3">{result.name}</h2>
-              <p className="text-sm leading-relaxed opacity-90">
-                {result.text}
+            {/* 🧠 RESULTAT HALLUCINÉ */}
+            <div className="p-6 rounded-xl bg-white/10 border border-white/20">
+              <h2 className="text-xl font-bold mb-3">
+                ENTITÉ DÉTECTÉE : {entity}
+              </h2>
+
+              <p className="text-sm leading-relaxed text-white/80">
+                {generateNarrative()}
               </p>
             </div>
 
-            <p className="text-white/60 mt-4">
-              CONTAMINATION ONYRIQUE :
-              <span className="font-bold text-white ml-2">
+            {/* CONTAMINATION */}
+            <p className="text-white/60">
+              niveau de réalité instable :
+              <span className="ml-2 text-white font-bold">
                 {percent}%
               </span>
             </p>
 
+            {/* CTA */}
             <button
               onClick={() => router.push("/reves")}
               className="px-6 py-3 border border-white/40 rounded hover:bg-white hover:text-black transition"
             >
-              entrer dans le monde onirique
+              entrer dans la couche suivante du rêve
             </button>
 
           </div>
