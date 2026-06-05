@@ -28,31 +28,32 @@ export default function Reves() {
   const [activeReply, setActiveReply] = useState<string | null>(null);
   const [floatingText, setFloatingText] = useState("");
 
-  // 📥 LOAD DREAMS (SOURCE OF TRUTH)
+  const [liking, setLiking] = useState<string | null>(null);
+
+  // 📥 LOAD DREAMS
   async function loadDreams() {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("dreams")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (!error) setDreams(data || []);
+    if (data) setDreams(data);
   }
 
-  // 📥 LOAD REPLIES (SOURCE OF TRUTH)
+  // 📥 LOAD REPLIES
   async function loadReplies() {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("dream_replies")
       .select("*")
       .order("created_at", { ascending: true });
 
-    if (!error) setReplies(data || []);
+    if (data) setReplies(data);
   }
 
   useEffect(() => {
     loadDreams();
     loadReplies();
 
-    // ⚡ REALTIME SYNC
     const channel = supabase
       .channel("dreams-live")
 
@@ -84,7 +85,11 @@ export default function Reves() {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "dream_replies" },
         (payload) => {
-          setReplies((prev) => [...prev, payload.new as Reply]);
+          setReplies((prev) => {
+            const exists = prev.find((r) => r.id === payload.new.id);
+            if (exists) return prev;
+            return [...prev, payload.new as Reply];
+          });
         }
       )
 
@@ -95,7 +100,7 @@ export default function Reves() {
     };
   }, []);
 
-  // ✨ ADD DREAM (optimistic + DB sync)
+  // ✨ ADD DREAM
   async function addDream() {
     if (!input.trim()) return;
 
@@ -112,21 +117,24 @@ export default function Reves() {
 
     setDreams((prev) => [temp, ...prev]);
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("dreams")
       .insert([{ text, likes: 0 }])
       .select()
       .single();
 
-    if (!error && data) {
+    if (data) {
       setDreams((prev) =>
         prev.map((d) => (d.id === temp.id ? data : d))
       );
     }
   }
 
-  // ❤️ LIKE (persistant + instant UI)
+  // ❤️ LIKE STABLE + SAFE
   async function likeDream(id: string) {
+    if (liking === id) return;
+    setLiking(id);
+
     const dream = dreams.find((d) => d.id === id);
     if (!dream) return;
 
@@ -142,9 +150,11 @@ export default function Reves() {
       .from("dreams")
       .update({ likes: newLikes })
       .eq("id", id);
+
+    setLiking(null);
   }
 
-  // 💬 CONTINUE DREAM (reply persisté)
+  // 💬 CONTINUE DREAM
   async function sendReply(dreamId: string) {
     if (!replyInput.trim()) return;
 
@@ -153,13 +163,13 @@ export default function Reves() {
     setActiveReply(null);
     setFloatingText(text);
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("dream_replies")
       .insert([{ dream_id: dreamId, text }])
       .select()
       .single();
 
-    if (!error && data) {
+    if (data) {
       setReplies((prev) => [...prev, data]);
     }
   }
@@ -167,15 +177,17 @@ export default function Reves() {
   return (
     <main className="h-screen flex flex-col bg-black text-white relative overflow-hidden">
 
-      {/* 🌌 BACKGROUND */}
+      {/* BACKGROUND */}
       <div className="absolute inset-0 bg-gradient-to-b from-indigo-950 via-black to-purple-950 opacity-70 animate-pulse" />
 
       {/* HEADER */}
       <header className="relative z-10 p-3 text-center border-b border-white/10">
-        <h1 className="text-sm tracking-[0.3em]">RÊVES COLLECTIFS</h1>
+        <h1 className="text-xs tracking-[0.3em]">
+          RÊVES COLLECTIFS EN DIRECT
+        </h1>
       </header>
 
-      {/* LIST (IMPORTANT: pb-24 = input collé mobile) */}
+      {/* LIST */}
       <section className="relative z-10 flex-1 overflow-y-auto p-3 pb-24 space-y-3">
 
         {dreams.map((d) => (
@@ -185,10 +197,12 @@ export default function Reves() {
           >
             <p className="text-sm mb-2">{d.text}</p>
 
-            {/* ACTIONS */}
             <div className="flex justify-between items-center text-xs">
 
-              <button onClick={() => likeDream(d.id)}>
+              <button
+                onClick={() => likeDream(d.id)}
+                className="active:scale-95 transition"
+              >
                 ❤️ {d.likes}
               </button>
 
@@ -198,12 +212,12 @@ export default function Reves() {
                 }
                 className="bg-white/10 px-2 py-1 rounded"
               >
-                Continuer
+                continuer
               </button>
 
             </div>
 
-            {/* REPLIES (persistants + reload OK) */}
+            {/* REPLIES */}
             <div className="mt-2 space-y-1">
               {replies
                 .filter((r) => r.dream_id === d.id)
@@ -217,7 +231,7 @@ export default function Reves() {
                 ))}
             </div>
 
-            {/* INPUT CONTINUE */}
+            {/* INPUT REPLY */}
             {activeReply === d.id && (
               <div className="mt-2 flex gap-2">
                 <input
@@ -240,14 +254,14 @@ export default function Reves() {
 
       </section>
 
-      {/* 🌫 FLOATING TEXT */}
+      {/* FLOAT */}
       {floatingText && (
         <div className="absolute bottom-28 left-1/2 -translate-x-1/2 text-white/40 text-sm animate-bounce pointer-events-none">
           {floatingText}
         </div>
       )}
 
-      {/* FOOTER MOBILE */}
+      {/* INPUT */}
       <footer className="relative z-10 p-2 border-t border-white/10 bg-black/70 backdrop-blur-md">
         <div className="flex gap-2 max-w-md mx-auto">
 
@@ -262,14 +276,14 @@ export default function Reves() {
             onClick={addDream}
             className="px-3 bg-purple-500 rounded text-sm"
           >
-            Partager
+            partager
           </button>
 
           <button
             onClick={() => router.push("/final")}
             className="px-3 bg-white/10 border border-white/10 rounded text-sm"
           >
-            Continuer
+            suite
           </button>
 
         </div>
