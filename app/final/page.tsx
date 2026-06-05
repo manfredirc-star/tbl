@@ -38,11 +38,10 @@ export default function FinalPage() {
 
         {/* ACCROCHE */}
         <p className="text-lg md:text-xl leading-relaxed mb-4">
-          Tu n’as peut-être rien “fait”.
-        </p>
+Tu est rentré dans la boucle onyrique de Barnard        </p>
 
         <p className="text-lg md:text-xl leading-relaxed mb-10 opacity-80">
-          Mais quelque chose a été partagé.
+         Quelque chose a été partagé.
         </p>
 
         {/* BLOC ÉMOTION / SENS */}
@@ -81,12 +80,12 @@ export default function FinalPage() {
           onClick={share}
           className="text-base underline underline-offset-4 opacity-70 hover:opacity-100 transition"
         >
-          💌 envoyer à quelqu’un
+          💌 partager ce rêve
         </button>
 
         {/* MICRO CONVERSION FINALE */}
         <p className="mt-12 text-sm opacity-60 leading-relaxed">
-          Ce spectacle parle de toi,
+          Ce spectacle parle aussi de toi,
           même si tu ne le sais pas encore.
         </p>
 
