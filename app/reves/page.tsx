@@ -14,6 +14,7 @@ type Dream = {
 type Comment = {
   id: string;
   dream_id: string;
+  parent_id: string | null;
   text: string;
   created_at: string;
 };
@@ -29,7 +30,7 @@ export default function Reves() {
   const [activeComment, setActiveComment] = useState<string | null>(null);
 
   // =====================
-  // LOAD
+  // LOAD DATA
   // =====================
   async function loadAll() {
     const [{ data: dreamsData }, { data: commentsData }] = await Promise.all([
@@ -52,7 +53,7 @@ export default function Reves() {
     loadAll();
 
     const channel = supabase
-      .channel("dreams-live")
+      .channel("reves-live")
 
       .on(
         "postgres_changes",
@@ -106,7 +107,7 @@ export default function Reves() {
   }
 
   // =====================
-  // LIKE
+  // LIKE DREAM
   // =====================
   async function likeDream(id: string) {
     const dream = dreams.find((d) => d.id === id);
@@ -127,20 +128,80 @@ export default function Reves() {
   }
 
   // =====================
-  // COMMENT
+  // COMMENT / REPLY (THREADS)
   // =====================
-  async function sendComment(dreamId: string) {
+  async function sendComment(
+    dreamId: string,
+    parentId: string | null = null
+  ) {
     if (!commentInput.trim()) return;
 
     await supabase.from("dream_comments").insert([
       {
         dream_id: dreamId,
+        parent_id: parentId,
         text: commentInput,
       },
     ]);
 
     setCommentInput("");
     setActiveComment(null);
+  }
+
+  // =====================
+  // RECURSIVE RENDER
+  // =====================
+  function renderComments(
+    dreamId: string,
+    parentId: string | null = null
+  ) {
+    return comments
+      .filter(
+        (c) =>
+          c.dream_id === dreamId &&
+          c.parent_id === parentId
+      )
+      .map((c) => (
+        <div
+          key={c.id}
+          className="ml-3 mt-2 border-l border-white/10 pl-2"
+        >
+          <p className="text-xs">{c.text}</p>
+
+          <button
+            className="text-[10px] text-white/50 mt-1"
+            onClick={() => setActiveComment(c.id)}
+          >
+            répondre
+          </button>
+
+          {/* INPUT REPLY */}
+          {activeComment === c.id && (
+            <div className="flex gap-1 mt-1">
+              <input
+                value={commentInput}
+                onChange={(e) =>
+                  setCommentInput(e.target.value)
+                }
+                className="text-xs bg-white/10 p-1 rounded flex-1"
+                placeholder="réponse..."
+              />
+
+              <button
+                onClick={() =>
+                  sendComment(dreamId, c.id)
+                }
+                className="text-xs bg-purple-500 px-2 rounded"
+              >
+                ok
+              </button>
+            </div>
+          )}
+
+          {/* RECURSION */}
+          {renderComments(dreamId, c.id)}
+        </div>
+      ));
   }
 
   // =====================
@@ -173,7 +234,9 @@ export default function Reves() {
 
               <button
                 onClick={() =>
-                  setActiveComment(activeComment === d.id ? null : d.id)
+                  setActiveComment(
+                    activeComment === d.id ? null : d.id
+                  )
                 }
                 className="bg-white/10 px-2 py-1 rounded"
               >
@@ -181,37 +244,10 @@ export default function Reves() {
               </button>
             </div>
 
-            {/* COMMENTS */}
-            <div className="mt-2 space-y-1">
-              {comments
-                .filter((c) => c.dream_id === d.id)
-                .map((c) => (
-                  <div
-                    key={c.id}
-                    className="text-xs bg-black/40 p-2 rounded"
-                  >
-                    {c.text}
-                  </div>
-                ))}
+            {/* COMMENTS TREE */}
+            <div className="mt-2">
+              {renderComments(d.id)}
             </div>
-
-            {/* INPUT COMMENT */}
-            {activeComment === d.id && (
-              <div className="mt-2 flex gap-2">
-                <input
-                  value={commentInput}
-                  onChange={(e) => setCommentInput(e.target.value)}
-                  placeholder="continuer ce rêve..."
-                  className="flex-1 text-xs p-2 rounded bg-white/10"
-                />
-                <button
-                  onClick={() => sendComment(d.id)}
-                  className="text-xs px-2 bg-purple-500 rounded"
-                >
-                  OK
-                </button>
-              </div>
-            )}
           </div>
         ))}
       </section>
