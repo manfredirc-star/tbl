@@ -1,90 +1,103 @@
 "use client";
 
 export default function FinalPage() {
-
-  function openAignon() {
-    window.open("https://aignon.com", "_blank");
+  function openAvignon() {
+    window.open(
+      "https://festivaloffavignon.com/spectacles/the-barnard-loop",
+      "_blank"
+    );
   }
 
   function share() {
     const text =
-      "J’ai trouvé un message étrange lié à Barnard. Je crois que ça doit être vu par quelqu’un qui rêve encore.";
+      "Je viens de tomber dans The Barnard Loop. Apparemment le rêve continue en vrai cet été à Avignon.";
 
     if (navigator.share) {
       navigator.share({
-        title: "Barnard Loop",
+        title: "The Barnard Loop",
         text,
         url: window.location.origin,
       });
     } else {
-      navigator.clipboard.writeText(text + " " + window.location.origin);
-      alert("Message copié");
+      navigator.clipboard.writeText(
+        text + " " + window.location.origin
+      );
+      alert("Lien copié ✨");
     }
   }
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center text-center p-6 bg-black text-white overflow-hidden">
+    <main className="min-h-screen bg-[#f8f4eb] text-black flex items-center justify-center px-6 py-12">
+      <div className="max-w-xl text-center relative">
 
-      {/* 🌌 fond vivant doux */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-indigo-950 to-black opacity-90" />
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white,_transparent_70%)] animate-pulse" />
-
-      {/* contenu */}
-      <div className="relative z-10 max-w-lg space-y-8">
-
-        {/* titre étrange */}
-        <h1 className="text-2xl font-bold tracking-widest">
-          quelqu’un a laissé un rêve ici
-        </h1>
-
-        <p className="text-white/70 leading-relaxed">
-          Barnard n’est pas un personnage.  
-          C’est ce qui arrive quand plusieurs rêves essaient de parler en même temps.
-        </p>
-
-        <p className="text-white/60 text-sm">
-          parfois il s’écrit dans les interfaces.  
-          parfois il se glisse dans les décisions des gens qui hésitent trop longtemps.
-        </p>
-
-        {/* bloc poétique */}
-        <div className="p-6 rounded-xl bg-gradient-to-br from-indigo-600 via-purple-700 to-black shadow-xl">
-
-          <p className="text-sm text-white/90 leading-relaxed">
-            si tu es arrivé ici, c’est probablement que quelqu’un que tu connais
-            aurait dû voir ce message aussi.
-          </p>
-
+        <div className="absolute -top-10 left-0 text-3xl rotate-[-15deg] opacity-50">
+          ✦
         </div>
 
-        {/* CTA principal doux */}
-        <button
-          onClick={openAignon}
-          className="px-6 py-3 bg-white text-black rounded-xl font-semibold hover:scale-105 transition"
+        <div className="absolute top-0 right-0 text-2xl rotate-12 opacity-50">
+          ☁
+        </div>
+
+        <div className="absolute bottom-20 -left-4 text-xl opacity-40">
+          ↺
+        </div>
+
+        <h1
+          className="text-5xl md:text-6xl mb-8 leading-none"
+          style={{ fontFamily: "cursive" }}
         >
-          voir les dates du spectacle
+          le rêve continue
+        </h1>
+
+        <p className="text-lg md:text-xl leading-relaxed mb-6">
+          tu viens de terminer une version numérique de Barnard.
+        </p>
+
+        <p className="text-lg md:text-xl leading-relaxed mb-10">
+          maintenant le rêve existe en vrai.
+          <br />
+          cet été à Avignon.
+        </p>
+
+        <div className="border-2 border-black rounded-[30px] p-8 mb-10 bg-white/60">
+          <p className="text-xl leading-relaxed">
+            ce que tu viens de vivre
+            <br />
+            continue en live.
+          </p>
+
+          <p className="mt-6 text-base leading-relaxed opacity-80">
+            The Barnard Loop est un rêve collectif
+            qui prend vie sur scène.
+          </p>
+
+          <p
+            className="mt-4 text-2xl"
+            style={{ fontFamily: "cursive" }}
+          >
+            ne l'arrête pas.
+          </p>
+        </div>
+
+        <button
+          onClick={openAvignon}
+          className="w-full py-4 rounded-2xl bg-black text-white text-lg font-semibold hover:scale-105 transition mb-5"
+        >
+          voir le spectacle
         </button>
 
-        {/* CTA viral */}
         <button
           onClick={share}
-          className="block mx-auto text-sm text-white/60 underline hover:text-white"
+          className="text-base underline underline-offset-4 opacity-70 hover:opacity-100 transition"
         >
-          envoyer à quelqu’un qui rêve souvent
+          partager le rêve ↗
         </button>
 
-        {/* micro phrase */}
-        <p className="text-xs text-white/30">
-          barnard loop — performance vivante / avignon / tournée
+        <p className="mt-12 text-xs opacity-40">
+          The Barnard Loop • Festival OFF Avignon • Théâtre de l'Entrepôt
         </p>
 
       </div>
-
-      {/* signature invisible */}
-      <div className="absolute bottom-6 text-xs text-white/20 tracking-widest">
-        si tu comprends, tu es déjà dedans
-      </div>
-
     </main>
   );
 }
