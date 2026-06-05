@@ -10,11 +10,11 @@ export default function FinalPage() {
 
   function share() {
     const text =
-      "Je viens de laisser quelque chose dans The Barnard Loop. Apparemment les rêves continuent en vrai cet été à Avignon.";
+      "J’ai trouvé un fragment de Barnard. Je crois que d’autres personnes le voient aussi. Cet été à Avignon.";
 
     if (navigator.share) {
       navigator.share({
-        title: "The Barnard Loop",
+        title: "Barnard Loop",
         text,
         url: window.location.origin,
       });
@@ -22,73 +22,97 @@ export default function FinalPage() {
       navigator.clipboard.writeText(
         text + " " + window.location.origin
       );
-      alert("Lien copié ✨");
+      alert("message copié");
     }
   }
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center px-6 py-12 relative overflow-hidden">
 
-      {/* glow mystérieux */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(120,119,198,0.25),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(255,255,255,0.05),transparent_70%)]" />
+      {/* bruit / glitch visuel */}
+      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white,_transparent_60%)] animate-pulse" />
 
-      {/* éléments flottants */}
-      <div className="absolute top-10 left-6 text-white/20 text-3xl rotate-12">
-        ✦
+      {/* éléments "système" */}
+      <div className="absolute top-10 left-6 text-white/20 text-sm tracking-widest">
+        [signal reçu]
       </div>
 
-      <div className="absolute top-20 right-8 text-white/20 text-2xl -rotate-12">
-        ☁
+      <div className="absolute top-16 right-6 text-white/20 text-sm tracking-widest">
+        node: unstable
       </div>
 
-      <div className="absolute bottom-20 left-10 text-white/10 text-xl">
-        ↺
+      <div className="absolute bottom-10 left-6 text-white/10 text-xs">
+        loop://active
       </div>
 
       <div className="max-w-xl text-center relative z-10">
 
-        {/* TITRE */}
-        <h1 className="text-5xl md:text-6xl mb-10 font-semibold leading-tight">
-          ton rêve n'était pas le seul.
+        {/* titre type système cassé */}
+        <h1 className="text-4xl md:text-6xl font-semibold mb-10 leading-tight">
+          un fragment a été laissé ici.
         </h1>
 
-        {/* INTRO */}
-        <p className="text-lg md:text-xl leading-relaxed mb-6 text-white/90">
-          Tu viens de laisser une trace dans Barnard.
-        </p>
+        {/* état système */}
+        <div className="border border-white/20 rounded-2xl p-6 mb-10 text-left bg-white/5">
 
-        <p className="text-lg md:text-xl leading-relaxed mb-10 text-white/70">
-          D’autres personnes en laissent aussi.
-          <br />
-          Ensemble, ça devient quelque chose de vivant.
-        </p>
-
-        {/* BLOC CENTRAL */}
-        <div className="border border-white/30 rounded-3xl p-8 mb-10 bg-white/5 backdrop-blur">
-
-          <p className="text-xl leading-relaxed mb-4">
-            ce que tu viens de vivre continue en vrai.
+          <p className="text-sm text-white/60 mb-3">
+            statut : non résolu
           </p>
 
-          <p className="text-base leading-relaxed text-white/70 mb-4">
-            The Barnard Loop rassemble des fragments de rêves,
-            des images et des sensations de chacun,
-            et les fait exister sur scène.
+          <p className="text-sm text-white/60 mb-3">
+            origine : inconnue (Barnard)
           </p>
 
-          <p className="text-xl text-white">
-            cet été à Avignon.
+          <p className="text-sm text-white/60 mb-3">
+            répétition : oui
+          </p>
+
+          <p className="text-sm text-white/60">
+            observation : plusieurs rêves se superposent
           </p>
 
         </div>
 
-        {/* CTA PRINCIPAL */}
+        {/* message principal */}
+        <p className="text-lg md:text-xl leading-relaxed mb-6 text-white/90">
+          Tu viens de traverser une version de Barnard.
+        </p>
+
+        <p className="text-lg md:text-xl leading-relaxed mb-10 text-white/70">
+          D’autres personnes y entrent aussi.
+          <br />
+          Les résultats ne sont pas identiques.
+        </p>
+
+        {/* bloc étrange */}
+        <div className="border border-dashed border-white/30 rounded-3xl p-8 mb-10 bg-white/5">
+
+          <p className="text-xl mb-4">
+            ce que tu as vu n’est pas fermé.
+          </p>
+
+          <p className="text-base text-white/70 mb-4">
+            The Barnard Loop est un système vivant construit à partir
+            de fragments de rêves humains.
+          </p>
+
+          <p className="text-xl">
+            il continue hors de ton écran.
+          </p>
+
+        </div>
+
+        {/* glitch phrase */}
+        <p className="text-sm tracking-widest text-white/40 mb-8">
+          si tu comprends, tu fais déjà partie du réseau.
+        </p>
+
+        {/* CTA principal */}
         <button
           onClick={openAvignon}
           className="w-full py-4 rounded-2xl bg-white text-black text-lg font-semibold hover:scale-105 transition mb-5"
         >
-          ✨ voir le spectacle
+          ▶ exécuter la suite (Avignon)
         </button>
 
         {/* SHARE */}
@@ -96,12 +120,12 @@ export default function FinalPage() {
           onClick={share}
           className="text-base underline underline-offset-4 text-white/60 hover:text-white transition"
         >
-          💌 inviter quelqu’un à rêver aussi
+          transmettre le fragment
         </button>
 
-        {/* FOOTER */}
-        <p className="mt-12 text-xs text-white/30">
-          The Barnard Loop • Festival OFF Avignon • Théâtre de l'Entrepôt
+        {/* footer étrange */}
+        <p className="mt-12 text-xs text-white/20 tracking-widest">
+          Barnard Loop • observation active • Théâtre de l'Entrepôt
         </p>
 
       </div>
