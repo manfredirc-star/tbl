@@ -10,7 +10,7 @@ export default function FinalPage() {
 
   function share() {
     const text =
-      "Je viens de découvrir The Barnard Loop. C’est un spectacle sur les rêves et ce qu’on partage sans le dire. Cet été à Avignon.";
+      "Je viens de découvrir The Barnard Loop. Un spectacle sur les rêves qu’on partage sans s’en rendre compte. À Avignon cet été.";
 
     if (navigator.share) {
       navigator.share({
@@ -31,33 +31,30 @@ export default function FinalPage() {
 
       <div className="max-w-xl text-center">
 
-        {/* TITRE SIMPLE / HUMAIN */}
-        <h1 className="text-5xl md:text-6xl font-semibold mb-8 leading-tight">
-          tu viens de partager quelque chose.
+        {/* TITRE PLUS HUMAIN */}
+        <h1 className="text-5xl md:text-6xl font-semibold mb-6 leading-tight">
+          ce que tu viens de vivre continue ailleurs.
         </h1>
 
-        {/* INTRO ÉMOTIONNELLE */}
-        <p className="text-lg md:text-xl leading-relaxed mb-6">
-          Même si tu ne t’en rends pas compte,
-          ce que tu viens de vivre t’appartient un peu.
+        {/* ACCROCHE */}
+        <p className="text-lg md:text-xl leading-relaxed mb-4">
+          Tu n’as peut-être rien “fait”.
         </p>
 
         <p className="text-lg md:text-xl leading-relaxed mb-10 opacity-80">
-          Et maintenant, ça continue ailleurs.
+          Mais quelque chose a été partagé.
         </p>
 
-        {/* BLOC CENTRAL ÉMOTION */}
+        {/* BLOC ÉMOTION / SENS */}
         <div className="border border-black rounded-3xl p-8 mb-10 bg-[#fafafa]">
 
           <p className="text-xl leading-relaxed mb-4">
-            The Barnard Loop parle de ça :
+            The Barnard Loop part de là :
           </p>
 
           <p className="text-base leading-relaxed opacity-80 mb-4">
-            des rêves qu’on garde pour soi,
-            des choses qu’on ressent sans les expliquer,
-            et du moment où elles deviennent réelles
-            quand on les partage.
+            des rêves, des fragments d’idées,
+            et ce moment étrange où ils deviennent communs.
           </p>
 
           <p className="text-xl font-medium">
@@ -66,31 +63,31 @@ export default function FinalPage() {
 
         </div>
 
-        {/* CTA PRINCIPAL */}
+        {/* 🔥 CTA OPTIMISÉ (TRÈS IMPORTANT) */}
         <button
           onClick={openAvignon}
-          className="w-full py-4 rounded-2xl bg-black text-white text-lg font-semibold hover:scale-105 transition mb-5"
+          className="w-full py-5 rounded-2xl bg-black text-white text-lg font-semibold hover:scale-105 transition mb-3"
         >
-          ✨ réserver le spectacle
+          🎟️ réserver ma place
         </button>
 
-        {/* SHARE PLUS HUMAIN */}
+        {/* SOUS CTA (réduction de friction mentale) */}
+        <p className="text-xs opacity-50 mb-6">
+          Festival OFF Avignon • Théâtre de l’Entrepôt
+        </p>
+
+        {/* SHARE OPTIMISÉ */}
         <button
           onClick={share}
           className="text-base underline underline-offset-4 opacity-70 hover:opacity-100 transition"
         >
-          💌 partager à quelqu’un qui devrait le voir
+          💌 envoyer à quelqu’un
         </button>
 
-        {/* MICRO PHRASE FINALE */}
-        <p className="mt-12 text-sm opacity-50 leading-relaxed">
-          Ce n’est pas juste un spectacle.
-          <br />
-          C’est quelque chose qu’on traverse ensemble.
-        </p>
-
-        <p className="mt-8 text-xs opacity-30">
-          The Barnard Loop • Festival OFF Avignon • Théâtre de l'Entrepôt
+        {/* MICRO CONVERSION FINALE */}
+        <p className="mt-12 text-sm opacity-60 leading-relaxed">
+          Ce spectacle parle de toi,
+          même si tu ne le sais pas encore.
         </p>
 
       </div>
