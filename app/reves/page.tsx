@@ -26,37 +26,32 @@ export default function Reves() {
   const [input, setInput] = useState("");
   const [replyInput, setReplyInput] = useState("");
   const [activeReply, setActiveReply] = useState<string | null>(null);
-  const [floatingText, setFloatingText] = useState("");
 
-  const [liking, setLiking] = useState<string | null>(null);
+  // =========================
+  // 📥 LOAD FROM SUPABASE (SOURCE OF TRUTH)
+  // =========================
 
-  // 📥 LOAD DREAMS
-  async function loadDreams() {
-    const { data } = await supabase
-      .from("dreams")
-      .select("*")
-      .order("created_at", { ascending: false });
+  async function loadAll() {
+    const [{ data: dreamsData }, { data: repliesData }] = await Promise.all([
+      supabase.from("dreams").select("*").order("created_at", { ascending: false }),
+      supabase.from("dream_replies").select("*").order("created_at", { ascending: true }),
+    ]);
 
-    if (data) setDreams(data);
-  }
-
-  // 📥 LOAD REPLIES
-  async function loadReplies() {
-    const { data } = await supabase
-      .from("dream_replies")
-      .select("*")
-      .order("created_at", { ascending: true });
-
-    if (data) setReplies(data);
+    if (dreamsData) setDreams(dreamsData);
+    if (repliesData) setReplies(repliesData);
   }
 
   useEffect(() => {
-    loadDreams();
-    loadReplies();
+    loadAll();
+
+    // =========================
+    // ⚡ REALTIME SYNC
+    // =========================
 
     const channel = supabase
       .channel("dreams-live")
 
+      // NEW DREAM
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "dreams" },
@@ -69,6 +64,7 @@ export default function Reves() {
         }
       )
 
+      // UPDATE DREAM (LIKES)
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "dreams" },
@@ -81,15 +77,12 @@ export default function Reves() {
         }
       )
 
+      // NEW REPLY
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "dream_replies" },
         (payload) => {
-          setReplies((prev) => {
-            const exists = prev.find((r) => r.id === payload.new.id);
-            if (exists) return prev;
-            return [...prev, payload.new as Reply];
-          });
+          setReplies((prev) => [...prev, payload.new as Reply]);
         }
       )
 
@@ -100,85 +93,80 @@ export default function Reves() {
     };
   }, []);
 
-  // ✨ ADD DREAM
+  // =========================
+  // ✨ ADD DREAM (ONLY DB IS TRUSTED)
+  // =========================
+
   async function addDream() {
     if (!input.trim()) return;
 
     const text = input;
     setInput("");
-    setFloatingText(text);
 
-    const temp: Dream = {
-      id: crypto.randomUUID(),
-      text,
-      created_at: new Date().toISOString(),
-      likes: 0,
-    };
-
-    setDreams((prev) => [temp, ...prev]);
-
-    const { data } = await supabase
-      .from("dreams")
-      .insert([{ text, likes: 0 }])
-      .select()
-      .single();
-
-    if (data) {
-      setDreams((prev) =>
-        prev.map((d) => (d.id === temp.id ? data : d))
-      );
-    }
+    await supabase.from("dreams").insert([
+      {
+        text,
+        likes: 0,
+      },
+    ]);
   }
 
-  // ❤️ LIKE STABLE + SAFE
-  async function likeDream(id: string) {
-    if (liking === id) return;
-    setLiking(id);
+  // =========================
+  // ❤️ LIKE (ROBUST + PERSISTENT)
+  // =========================
 
+  async function likeDream(id: string) {
     const dream = dreams.find((d) => d.id === id);
     if (!dream) return;
 
     const newLikes = (dream.likes || 0) + 1;
 
+    // UI optimiste
     setDreams((prev) =>
       prev.map((d) =>
         d.id === id ? { ...d, likes: newLikes } : d
       )
     );
 
-    await supabase
+    const { error } = await supabase
       .from("dreams")
       .update({ likes: newLikes })
       .eq("id", id);
 
-    setLiking(null);
+    if (error) {
+      // rollback si problème
+      loadAll();
+    }
   }
 
-  // 💬 CONTINUE DREAM
+  // =========================
+  // 💬 CONTINUE DREAM (NE PERD PLUS RIEN)
+  // =========================
+
   async function sendReply(dreamId: string) {
     if (!replyInput.trim()) return;
 
     const text = replyInput;
     setReplyInput("");
     setActiveReply(null);
-    setFloatingText(text);
 
-    const { data } = await supabase
-      .from("dream_replies")
-      .insert([{ dream_id: dreamId, text }])
-      .select()
-      .single();
-
-    if (data) {
-      setReplies((prev) => [...prev, data]);
-    }
+    await supabase.from("dream_replies").insert([
+      {
+        dream_id: dreamId,
+        text,
+      },
+    ]);
   }
+
+  // =========================
+  // UI
+  // =========================
 
   return (
     <main className="h-screen flex flex-col bg-black text-white relative overflow-hidden">
 
       {/* BACKGROUND */}
-      <div className="absolute inset-0 bg-gradient-to-b from-indigo-950 via-black to-purple-950 opacity-70 animate-pulse" />
+      <div className="absolute inset-0 bg-gradient-to-b from-indigo-950 via-black to-purple-950 opacity-80" />
 
       {/* HEADER */}
       <header className="relative z-10 p-3 text-center border-b border-white/10">
@@ -253,13 +241,6 @@ export default function Reves() {
         ))}
 
       </section>
-
-      {/* FLOAT */}
-      {floatingText && (
-        <div className="absolute bottom-28 left-1/2 -translate-x-1/2 text-white/40 text-sm animate-bounce pointer-events-none">
-          {floatingText}
-        </div>
-      )}
 
       {/* INPUT */}
       <footer className="relative z-10 p-2 border-t border-white/10 bg-black/70 backdrop-blur-md">
