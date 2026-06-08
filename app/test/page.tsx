@@ -96,7 +96,7 @@ export default function TestPage() {
     setStep((prev) => prev + 1);
   }
 
-  // 📸 STORY INSTAGRAM (IMAGE)
+  // 📸 STORY INSTAGRAM
   function generateInstagramStory() {
     const canvas = document.createElement("canvas");
     canvas.width = 1080;
@@ -220,11 +220,12 @@ export default function TestPage() {
 
             </div>
 
+            {/* NEW BUTTON */}
             <button
-              onClick={() => router.push("/reves")}
-              className="px-6 py-3 border rounded"
+              onClick={() => router.push("/Final")}
+              className="px-6 py-3 border rounded hover:bg-white hover:text-black transition"
             >
-              entrer dans le monde onirique
+              🎭 Découvrir le spectacle
             </button>
 
           </div>
