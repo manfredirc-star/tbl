@@ -19,21 +19,30 @@ export default function FinalPage() {
         url: window.location.origin,
       });
     } else {
-      navigator.clipboard.writeText(
-        text + " " + window.location.origin
-      );
+      navigator.clipboard.writeText(text + " " + window.location.origin);
       alert("Lien copié ✨");
     }
   }
 
   return (
-    <main className="min-h-screen bg-black text-white flex items-center justify-center px-6 py-12 relative overflow-hidden">
+    <main className="min-h-screen text-white flex items-center justify-center px-6 py-12 relative overflow-hidden">
 
-      {/* ambiance lumineuse / rêve */}
+      {/* 🖼️ BACKGROUND IMAGE (faccia.jpg) */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/faccia.jpg')",
+        }}
+      />
+
+      {/* 🌑 ASSOMBRISSEMENT POUR LISIBILITÉ */}
+      <div className="absolute inset-0 bg-black/60" />
+
+      {/* ✨ ambiance lumineuse / rêve */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(120,119,198,0.25),transparent_60%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(255,255,255,0.05),transparent_70%)]" />
 
-      {/* éléments flottants */}
+      {/* ✦ éléments flottants */}
       <div className="absolute top-10 left-6 text-white/20 text-3xl rotate-12">
         ✦
       </div>
@@ -46,14 +55,13 @@ export default function FinalPage() {
         ↺
       </div>
 
+      {/* CONTENU */}
       <div className="max-w-xl text-center relative z-10">
 
-        {/* TITRE */}
         <h1 className="text-5xl md:text-6xl mb-8 font-semibold leading-tight">
           ce que tu viens de vivre continue ailleurs.
         </h1>
 
-        {/* ACCROCHE */}
         <p className="text-lg md:text-xl leading-relaxed mb-4 text-white/90">
           tu es entré dans la boucle onirique de Barnard.
         </p>
@@ -88,7 +96,6 @@ export default function FinalPage() {
           🎟️ réserver ma place
         </button>
 
-        {/* SOUS CTA */}
         <p className="text-xs text-white/40 mb-6">
           Festival OFF Avignon • Théâtre de l’Entrepôt
         </p>
@@ -101,7 +108,6 @@ export default function FinalPage() {
           💌 partager ce rêve
         </button>
 
-        {/* MICRO PHRASE */}
         <p className="mt-12 text-sm text-white/60 leading-relaxed">
           ce spectacle parle aussi de toi,
           <br />
