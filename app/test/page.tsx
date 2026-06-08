@@ -12,6 +12,10 @@ export default function TestPage() {
 
   const finalPercent = Math.floor(Math.random() * 101);
 
+  // ⚠️ IMPORTANT : remplace ceci par une vraie image directe si besoin
+  const backgroundImage =
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2000&q=80";
+
   const allQuestions = [
     "Les objets rêvent-ils quand personne ne les regarde ?",
     "As-tu déjà entendu un mur respirer ?",
@@ -134,7 +138,6 @@ export default function TestPage() {
     link.click();
   }
 
-  // 📤 PARTAGE AMI
   async function shareFriend() {
     const text = `Je suis ${result.name} avec ${percent}% de contamination onirique ✨`;
 
@@ -155,9 +158,19 @@ export default function TestPage() {
   }
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center text-white bg-black overflow-hidden">
+    <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center text-white overflow-hidden">
 
-      <div className={`absolute inset-0 bg-gradient-to-b ${result.color} opacity-30`} />
+      {/* BACKGROUND IMAGE FIXE */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      />
+
+      {/* overlay sombre */}
+      <div className="absolute inset-0 bg-black/60" />
+
+      {/* gradient perso */}
+      <div className={`absolute inset-0 bg-gradient-to-b ${result.color} opacity-20`} />
 
       {boot && (
         <div className="absolute inset-0 flex items-center justify-center bg-black z-50">
@@ -201,7 +214,6 @@ export default function TestPage() {
               CONTAMINATION : <b>{percent}%</b>
             </p>
 
-            {/* CTA SHARE */}
             <div className="pt-4 border-t border-white/10 space-y-3">
 
               <button
@@ -220,7 +232,6 @@ export default function TestPage() {
 
             </div>
 
-            {/* NEW BUTTON */}
             <button
               onClick={() => router.push("/final")}
               className="px-6 py-3 border rounded hover:bg-white hover:text-black transition"
