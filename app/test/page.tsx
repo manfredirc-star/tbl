@@ -222,7 +222,7 @@ export default function TestPage() {
 
             {/* NEW BUTTON */}
             <button
-              onClick={() => router.push("/Final")}
+              onClick={() => router.push("/final")}
               className="px-6 py-3 border rounded hover:bg-white hover:text-black transition"
             >
               🎭 Découvrir le spectacle
