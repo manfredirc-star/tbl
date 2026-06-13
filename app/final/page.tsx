@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 export default function FinalPage() {
   function openAvignon() {
     window.open(
@@ -10,7 +12,7 @@ export default function FinalPage() {
 
   function share() {
     const text =
-      "The Barnard Loop m’a laissé un truc bizarre en tête… je sais pas trop si j’ai vu un spectacle ou autre chose. À Avignon cet été.";
+      "The Barnard Loop m’a laissé un truc bizarre en tête… je ne sais pas si j’ai vu un spectacle ou une expérience. À Avignon cet été.";
 
     if (navigator.share) {
       navigator.share({
@@ -24,11 +26,23 @@ export default function FinalPage() {
     }
   }
 
+  /* 🎵 musique onirique discrète */
+  useEffect(() => {
+    const audio = document.getElementById("dream-audio") as HTMLAudioElement;
+
+    if (audio) {
+      audio.volume = 0.25;
+      audio.play().catch(() => {
+        // autoplay blocked → ok
+      });
+    }
+  }, []);
+
   return (
     <main className="min-h-screen text-white flex items-center justify-center px-6 py-12 relative overflow-hidden">
 
-      {/* 🎵 MUSIQUE ONIRIQUE DISCRÈTE */}
-      <audio autoPlay loop>
+      {/* 🎵 SOUND */}
+      <audio id="dream-audio" autoPlay loop>
         <source src="/dream-ambient.mp3" type="audio/mpeg" />
       </audio>
 
@@ -52,36 +66,38 @@ export default function FinalPage() {
       {/* CONTENT */}
       <div className="max-w-xl text-center relative z-10">
 
-        {/* HEADER (couleur modifiée comme demandé) */}
-        <p className="text-xs md:text-sm text-purple-300/70 mb-6 tracking-wide">
+        {/* HEADER (important + discret mais premium) */}
+        <p className="text-xs md:text-sm text-purple-300/80 mb-8 tracking-wide">
           The Barnard Loop • Théâtre de l’Entrepôt • Festival OFF Avignon 2026 • 19h10
         </p>
 
         {/* TITLE */}
-        <h1 className="text-3xl md:text-5xl font-semibold tracking-wide mb-10">
+        <h1 className="text-4xl md:text-6xl font-semibold tracking-wide mb-10">
           THE BARNARD LOOP
         </h1>
 
-        {/* SUB MESSAGE */}
-        <p className="text-base md:text-lg text-white/70 mb-10 leading-relaxed">
-          ceci n’était pas qu’un rêve.  
-          parfois, la magie est dans le monde réel.
-        </p>
+        {/* 🔥 CORE MESSAGE (remplacé = plus fort, plus vendable) */}
+        <div className="mb-12 space-y-4">
 
-        {/* TESTIMONIALS */}
-        <div className="mb-10 space-y-4 text-white/70 text-sm">
+          <p className="text-xl md:text-2xl font-light text-white leading-snug">
+            certains rêves ne restent pas dans une seule tête.
+          </p>
 
-          <p>“je ne m’attendais pas à être autant dedans.”</p>
+          <p className="text-sm md:text-base text-white/70 leading-relaxed">
+            Barnard les archive quand personne ne regarde.  
+            Ciuffino les fait pousser dans les marges.  
+            La Souris les lit avant même qu’on les pense.
+          </p>
 
-          <p>“c’est étrange… mais j’ai encore des images en tête.”</p>
-
-          <p>“j’ai eu du mal à revenir à la réalité après.”</p>
+          <p className="text-lg md:text-xl text-white/90">
+            et parfois… ça déborde entre les gens.
+          </p>
 
         </div>
 
         {/* URGENCY */}
-        <p className="text-white/60 mb-8">
-          représentation limitée • chaque soirée est légèrement différente
+        <p className="text-white/60 mb-8 text-sm">
+          expérience limitée • chaque représentation évolue légèrement
         </p>
 
         {/* CTA */}
