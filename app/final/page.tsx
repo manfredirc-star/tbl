@@ -47,15 +47,15 @@ export default function FinalPage() {
       {/* CONTENT */}
       <div className="max-w-xl text-center relative z-10">
 
-        {/* HOOK (MODIFIÉ) */}
-        <h1 className="text-4xl md:text-6xl mb-6 font-semibold leading-tight">
-          ceci n’était pas qu’un rêve.
+        {/* HOOK (plus petit comme demandé) */}
+        <h1 className="text-2xl md:text-3xl mb-6 font-medium leading-snug text-white/90">
+          ceci n’était pas qu’un rêve.  
           <br />
           parfois, la magie est dans le monde réel.
         </h1>
 
-        <p className="text-lg md:text-xl text-white/70 mb-10">
-          The Barnard Loop existe quelque part entre les deux.
+        <p className="text-sm md:text-base text-white/60 mb-8">
+          The Barnard Loop • Théâtre de l’Entrepôt • Festival OFF Avignon 2026 • 19h10
         </p>
 
         {/* TITLE */}
@@ -63,7 +63,7 @@ export default function FinalPage() {
           THE BARNARD LOOP
         </h2>
 
-        {/* CORE BLOCK (RÉÉCRIT) */}
+        {/* CORE BLOCK */}
         <div className="border border-white/20 rounded-3xl p-8 mb-10 bg-white/5 backdrop-blur">
 
           <p className="text-lg mb-4">
@@ -82,20 +82,20 @@ export default function FinalPage() {
 
         </div>
 
-        {/* TESTIMONIALS (PLUS RÉALISTES) */}
+        {/* TESTIMONIALS PLUS RÉALISTES */}
         <div className="mb-10 space-y-4 text-white/70 text-sm">
 
-          <p>“je pensais venir voir un spectacle… c’était plus étrange que ça.”</p>
+          <p>“je ne m’attendais pas à être autant dedans.”</p>
 
-          <p>“à un moment j’ai oublié que j’étais dans une salle.”</p>
+          <p>“c’est étrange… mais j’ai encore des images en tête.”</p>
 
-          <p>“j’ai mis quelques minutes à revenir à la réalité après.”</p>
+          <p>“j’ai eu du mal à revenir à la réalité après.”</p>
 
         </div>
 
         {/* URGENCY */}
         <p className="text-white/60 mb-8">
-          représentation limitée • expérience vivante et changeante
+          représentation limitée • chaque soirée est légèrement différente
         </p>
 
         {/* CTA */}
