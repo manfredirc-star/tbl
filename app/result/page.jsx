@@ -23,7 +23,7 @@ export default function ResultPage() {
 
   if (!data) return null;
 
-  // 🔥 texte ultra viral prêt Instagram / WhatsApp
+  // 🔥 TEXTE VIRAL (Instagram / WhatsApp)
   const shareText = `TU ES : ${data.character}
 
 “${data.text}”
@@ -57,7 +57,7 @@ ${url}`;
   return (
     <main className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
 
-      {/* 🌌 BACKGROUND IMAGE */}
+      {/* BACKGROUND IMAGE */}
       <div
         className="absolute inset-0 bg-cover bg-center scale-110"
         style={{
@@ -65,13 +65,9 @@ ${url}`;
         }}
       />
 
-      {/* 🌫 OVERLAY CINÉMA */}
+      {/* OVERLAY */}
       <div className="absolute inset-0 bg-black/60" />
-
-      {/* 🎬 VIGNETTE PROPRE */}
       <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.85)]" />
-
-      {/* ✨ AMBIANCE */}
       <div className="absolute inset-0 bg-gradient-to-b from-purple-900/30 via-transparent to-black/80" />
 
       {/* CONTENT */}
@@ -93,7 +89,7 @@ ${url}`;
           {data.text}
         </p>
 
-        {/* 🔥 VIRAL HOOK */}
+        {/* VIRAL HOOK */}
         <p className="text-sm text-white/60 mb-2">
           Quelqu’un d’autre a eu ce résultat ?
         </p>
@@ -102,7 +98,7 @@ ${url}`;
           @dispensabarzotti
         </p>
 
-        {/* SHARE ACTIONS */}
+        {/* ACTIONS */}
         <div className="space-y-3">
 
           <button
@@ -113,8 +109,11 @@ ${url}`;
           </button>
 
           <button
-            onClick={copy}
-            className="w-full px-6 py-3 border border-white/20 rounded-xl text-white/70 hover:text-white"
+            onClick={async () => {
+              await copy();
+              window.location.href = "/final";
+            }}
+            className="w-full px-6 py-3 border border-white/20 rounded-xl text-white/70 hover:text-white transition"
           >
             copier le texte
           </button>
