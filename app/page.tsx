@@ -68,7 +68,7 @@ export default function Home() {
 
         {/* MESSAGE */}
         <p className="text-sm text-white/50 italic mb-10">
-          Les observations augmentent chaque jour.
+          Nous ignorons encore comment vous êtes arrivé ici.
         </p>
 
         {/* BOUTON */}
