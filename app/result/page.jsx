@@ -7,7 +7,6 @@ export default function ResultPage() {
   const [url, setUrl] = useState("");
 
   useEffect(() => {
-    // 🔥 récupère le résultat du test
     const result = localStorage.getItem("barnard_result");
 
     if (result) {
@@ -19,13 +18,12 @@ export default function ResultPage() {
       });
     }
 
-    // 🔥 URL dynamique réelle de la page
     setUrl(window.location.href);
   }, []);
 
   if (!data) return null;
 
-  // 🔥 TEXTE DE PARTAGE CONNECTÉ À LA PAGE RÉSULTAT
+  // 🔥 texte ultra viral prêt Instagram / WhatsApp
   const shareText = `TU ES : ${data.character}
 
 “${data.text}”
@@ -59,7 +57,7 @@ ${url}`;
   return (
     <main className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
 
-      {/* 🌌 BACKGROUND IMAGE (SPECTACLE) */}
+      {/* 🌌 BACKGROUND IMAGE */}
       <div
         className="absolute inset-0 bg-cover bg-center scale-110"
         style={{
@@ -67,13 +65,13 @@ ${url}`;
         }}
       />
 
-      {/* 🌫 DARK CINEMATIC OVERLAY */}
+      {/* 🌫 OVERLAY CINÉMA */}
       <div className="absolute inset-0 bg-black/60" />
 
-      {/* 🎬 VIGNETTE CINÉMA */}
-      <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.9)]" />
+      {/* 🎬 VIGNETTE PROPRE */}
+      <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.85)]" />
 
-      {/* ✨ LIGHT MYSTERIEUX */}
+      {/* ✨ AMBIANCE */}
       <div className="absolute inset-0 bg-gradient-to-b from-purple-900/30 via-transparent to-black/80" />
 
       {/* CONTENT */}
@@ -95,6 +93,7 @@ ${url}`;
           {data.text}
         </p>
 
+        {/* 🔥 VIRAL HOOK */}
         <p className="text-sm text-white/60 mb-2">
           Quelqu’un d’autre a eu ce résultat ?
         </p>
@@ -103,7 +102,7 @@ ${url}`;
           @dispensabarzotti
         </p>
 
-        {/* 🔥 SHARE BUTTONS */}
+        {/* SHARE ACTIONS */}
         <div className="space-y-3">
 
           <button
