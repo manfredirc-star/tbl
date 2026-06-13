@@ -109,13 +109,20 @@ ${url}`;
           </button>
 
           <button
-            onClick={async () => {
-              await copy();
-              window.location.href = "/final";
-            }}
+            onClick={copy}
             className="w-full px-6 py-3 border border-white/20 rounded-xl text-white/70 hover:text-white transition"
           >
             copier le texte
+          </button>
+
+          {/* 🔥 NOUVEAU CTA PRINCIPAL */}
+          <button
+            onClick={() => {
+              window.location.href = "/final";
+            }}
+            className="w-full px-6 py-4 mt-2 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition"
+          >
+            découvrir le spectacle réel
           </button>
 
         </div>
