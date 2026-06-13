@@ -33,7 +33,7 @@ export default function FinalPage() {
     if (audio) {
       audio.volume = 0.25;
       audio.play().catch(() => {
-        // autoplay blocked → ok
+        // autoplay bloqué → ok
       });
     }
   }, []);
@@ -66,7 +66,7 @@ export default function FinalPage() {
       {/* CONTENT */}
       <div className="max-w-xl text-center relative z-10">
 
-        {/* HEADER (important + discret mais premium) */}
+        {/* HEADER */}
         <p className="text-xs md:text-sm text-purple-300/80 mb-8 tracking-wide">
           The Barnard Loop • Théâtre de l’Entrepôt • Festival OFF Avignon 2026 • 19h10
         </p>
@@ -76,21 +76,19 @@ export default function FinalPage() {
           THE BARNARD LOOP
         </h1>
 
-        {/* 🔥 CORE MESSAGE (remplacé = plus fort, plus vendable) */}
-        <div className="mb-12 space-y-4">
+        {/* CORE MESSAGE (désormais sans lore explicatif) */}
+        <div className="mb-12 space-y-6">
 
           <p className="text-xl md:text-2xl font-light text-white leading-snug">
-            certains rêves ne restent pas dans une seule tête.
+            un spectacle sur ce qui arrive quand plusieurs esprits commencent à rêver la même chose.
           </p>
 
           <p className="text-sm md:text-base text-white/70 leading-relaxed">
-            Barnard les archive quand personne ne regarde.  
-            Ciuffino les fait pousser dans les marges.  
-            La Souris les lit avant même qu’on les pense.
+            théâtre visuel • rêve collectif • expérience immersive
           </p>
 
           <p className="text-lg md:text-xl text-white/90">
-            et parfois… ça déborde entre les gens.
+            tu ne regardes pas l’histoire. tu y entres.
           </p>
 
         </div>
