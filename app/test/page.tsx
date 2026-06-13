@@ -96,6 +96,24 @@ export default function TestPage() {
     setStep((prev) => prev + 1);
   }
 
+  // 🎯 FINAL STEP → SAVE + REDIRECT
+  function goToResult() {
+    const id = `${result.name}-${Date.now()}`;
+
+    const data = {
+      id,
+      character: result.name,
+      text: result.text,
+      percent,
+    };
+
+    // sauvegarde locale
+    localStorage.setItem("barnard_result", JSON.stringify(data));
+
+    // redirection vers page résultat
+    router.push("/result");
+  }
+
   // 📸 STORY INSTAGRAM
   function generateInstagramStory() {
     const canvas = document.createElement("canvas");
@@ -163,12 +181,9 @@ https://tbl-mu.vercel.app/test`;
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center text-white overflow-hidden">
 
-      {/* BACKGROUND */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('/background.jpg')",
-        }}
+        style={{ backgroundImage: "url('/background.jpg')" }}
       />
 
       <div className="absolute inset-0 bg-black/60" />
@@ -216,7 +231,6 @@ https://tbl-mu.vercel.app/test`;
               CONTAMINATION : <b>{percent}%</b>
             </p>
 
-            {/* 🔥 VIRAL HOOK */}
             <p className="text-sm text-white/60 italic">
               Quelqu’un d’autre a eu ce résultat ?
             </p>
@@ -239,11 +253,12 @@ https://tbl-mu.vercel.app/test`;
 
             </div>
 
+            {/* 🔥 NEW MAIN VIRAL ENTRY */}
             <button
-              onClick={() => router.push("/final")}
-              className="px-6 py-3 border rounded hover:bg-white hover:text-black transition"
+              onClick={goToResult}
+              className="w-full px-6 py-3 border rounded hover:bg-white hover:text-black transition"
             >
-              🎭 Accéder à la manifestation
+              🎭 Accéder à ma trace dans la boucle
             </button>
 
           </div>
