@@ -135,18 +135,25 @@ export default function TestPage() {
   }
 
   async function shareFriend() {
-    const text = `Je suis ${result.name} avec ${percent}% de contamination onirique ✨`;
+    const text = `J’ai fait le TEST DE CONTAMINATION ONIRIQUE.
+
+Résultat : ${result.name}
+Contamination : ${percent}%
+
+“Quelqu’un d’autre a eu ce résultat ?”
+
+https://tbl-mu.vercel.app/test`;
 
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "Test onirique",
+          title: "Test de contamination onirique",
           text,
           url: window.location.href,
         });
       } else {
         await navigator.clipboard.writeText(text);
-        alert("Lien copié !");
+        alert("Message copié pour Instagram / WhatsApp");
       }
     } catch (e) {
       console.log(e);
@@ -156,7 +163,7 @@ export default function TestPage() {
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center text-white overflow-hidden">
 
-      {/* 🖼️ BACKGROUND IMAGE (TON IMAGE) */}
+      {/* BACKGROUND */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
@@ -164,10 +171,7 @@ export default function TestPage() {
         }}
       />
 
-      {/* overlay sombre pour lisibilité */}
       <div className="absolute inset-0 bg-black/60" />
-
-      {/* gradient ambiance */}
       <div className={`absolute inset-0 bg-gradient-to-b ${result.color} opacity-20`} />
 
       {boot && (
@@ -212,6 +216,11 @@ export default function TestPage() {
               CONTAMINATION : <b>{percent}%</b>
             </p>
 
+            {/* 🔥 VIRAL HOOK */}
+            <p className="text-sm text-white/60 italic">
+              Quelqu’un d’autre a eu ce résultat ?
+            </p>
+
             <div className="pt-4 border-t border-white/10 space-y-3">
 
               <button
@@ -234,7 +243,7 @@ export default function TestPage() {
               onClick={() => router.push("/final")}
               className="px-6 py-3 border rounded hover:bg-white hover:text-black transition"
             >
-              🎭 Découvrir le spectacle
+              🎭 Accéder à la manifestation
             </button>
 
           </div>
