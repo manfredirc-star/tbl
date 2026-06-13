@@ -47,7 +47,7 @@ ${url}`;
           url,
         });
       } else {
-        copy();
+        await copy();
       }
     } catch (e) {
       console.log(e);
@@ -57,7 +57,7 @@ ${url}`;
   return (
     <main className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
 
-      {/* BACKGROUND IMAGE */}
+      {/* 🎬 BACKGROUND SPECTACLE */}
       <div
         className="absolute inset-0 bg-cover bg-center scale-110"
         style={{
@@ -65,9 +65,13 @@ ${url}`;
         }}
       />
 
-      {/* OVERLAY */}
+      {/* 🌑 OVERLAY CINÉMA */}
       <div className="absolute inset-0 bg-black/60" />
-      <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.85)]" />
+
+      {/* 🎞 VIGNETTE (effet film) */}
+      <div className="absolute inset-0 shadow-[inset_0_0_220px_rgba(0,0,0,0.9)]" />
+
+      {/* 🌌 AMBIANCE */}
       <div className="absolute inset-0 bg-gradient-to-b from-purple-900/30 via-transparent to-black/80" />
 
       {/* CONTENT */}
@@ -89,7 +93,7 @@ ${url}`;
           {data.text}
         </p>
 
-        {/* VIRAL HOOK */}
+        {/* 🔥 VIRAL HOOK */}
         <p className="text-sm text-white/60 mb-2">
           Quelqu’un d’autre a eu ce résultat ?
         </p>
@@ -115,11 +119,9 @@ ${url}`;
             copier le texte
           </button>
 
-          {/* 🔥 NOUVEAU CTA PRINCIPAL */}
+          {/* 🚀 CTA FINAL */}
           <button
-            onClick={() => {
-              window.location.href = "/final";
-            }}
+            onClick={() => (window.location.href = "/final")}
             className="w-full px-6 py-4 mt-2 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition"
           >
             découvrir le spectacle réel
