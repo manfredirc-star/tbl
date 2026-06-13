@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Character = {
   name: string;
@@ -17,58 +17,30 @@ export default function TestPage() {
   ];
 
   const characters: Character[] = [
-    { name: "ARCHIVISTE DES CHOSES INVISIBLES", text: "Tu collectes le silence des objets." },
-    { name: "SURVEILLANT DES FAIBLES FRÉQUENCES", text: "Tu entends ce que le monde oublie d’émettre." },
-    { name: "JUGE DES PENSÉES DOMESTIQUES", text: "Même les objets te semblent vivants." },
-    { name: "MÉMOIRE FLOTTANTE", text: "Tu dérives entre souvenirs et fiction." },
-    { name: "CORPS DE RÊVE", text: "Tu n’habites pas le réel, seulement ses reflets." },
+    {
+      name: "ARCHIVISTE DES CHOSES INVISIBLES",
+      text: "Tu collectes le silence des objets.",
+    },
+    {
+      name: "SURVEILLANT DES FAIBLES FRÉQUENCES",
+      text: "Tu perçois ce que le monde oublie d’émettre.",
+    },
+    {
+      name: "JUGE DES PENSÉES DOMESTIQUES",
+      text: "Même les objets te semblent vivants.",
+    },
+    {
+      name: "MÉMOIRE FLOTTANTE",
+      text: "Tu dérives entre souvenirs et fiction.",
+    },
+    {
+      name: "CORPS DE RÊVE",
+      text: "Tu n’habites pas le réel, seulement ses reflets.",
+    },
   ];
 
   const [step, setStep] = useState(0);
   const [result, setResult] = useState<Character | null>(null);
-  const [displayText, setDisplayText] = useState("");
-  const [animating, setAnimating] = useState(false);
-
-  // 🔊 petit son "machine"
-  function playBeep() {
-    try {
-      const ctx = new AudioContext();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = "sine";
-      osc.frequency.value = 600;
-
-      gain.gain.value = 0.03;
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.start();
-      osc.stop(ctx.currentTime + 0.05);
-    } catch {}
-  }
-
-  // 🎬 glitch typing effect
-  function typeText(text: string, callback?: () => void) {
-    setDisplayText("");
-    setAnimating(true);
-
-    let i = 0;
-
-    const interval = setInterval(() => {
-      setDisplayText(text.slice(0, i));
-      i++;
-
-      playBeep();
-
-      if (i > text.length) {
-        clearInterval(interval);
-        setAnimating(false);
-        callback?.();
-      }
-    }, 25);
-  }
 
   function answer() {
     const next = step + 1;
@@ -76,22 +48,15 @@ export default function TestPage() {
     if (next >= questions.length) {
       const random =
         characters[Math.floor(Math.random() * characters.length)];
-
-      // transition finale
-      typeText("ANALYSE TERMINÉE...", () => {
-        setTimeout(() => setResult(random), 600);
-      });
+      setResult(random);
     } else {
-      typeText("LECTURE...", () => {
-        setStep(next);
-      });
+      setStep(next);
     }
   }
 
   function restart() {
     setStep(0);
     setResult(null);
-    setDisplayText("");
   }
 
   function shareWhatsApp() {
@@ -114,34 +79,26 @@ export default function TestPage() {
 
   return (
     <main style={styles.main}>
-      {/* overlay ciné */}
       <div style={styles.overlay} />
-
-      {/* scanlines effet écran */}
       <div style={styles.scanlines} />
 
       <div style={styles.container}>
-        {/* INTRO / QUESTIONS */}
+        {/* QUESTIONS */}
         {!result && (
           <>
-            <h1 style={styles.title}>ANALYSE PSYCHIQUE</h1>
+            <h1 style={styles.title}>ANALYSE ONYRIQUE</h1>
 
-            <p style={styles.text}>
-              {displayText || currentQuestion}
-            </p>
+            <p style={styles.text}>{currentQuestion}</p>
 
             <div style={styles.btnRow}>
               <button onClick={answer} style={styles.btn}>
                 Oui
               </button>
+
               <button onClick={answer} style={styles.btn}>
                 Non
               </button>
             </div>
-
-            <p style={styles.progress}>
-              {step + 1} / {questions.length}
-            </p>
           </>
         )}
 
@@ -181,7 +138,7 @@ export default function TestPage() {
   );
 }
 
-/* 🎨 STYLES CINÉMATIQUES */
+/* 🎨 STYLES */
 const styles: Record<string, React.CSSProperties> = {
   main: {
     minHeight: "100vh",
@@ -268,11 +225,5 @@ const styles: Record<string, React.CSSProperties> = {
     background: "transparent",
     border: "none",
     color: "white",
-  },
-
-  progress: {
-    marginTop: 15,
-    fontSize: 12,
-    opacity: 0.5,
   },
 };
