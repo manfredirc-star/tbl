@@ -9,26 +9,25 @@ type Character = {
 
 type Question = {
   text: string;
-  tag: "peur" | "mémoire" | "identité" | "absurde" | "objets";
 };
 
-/* 🌙 50 QUESTIONS */
+/* 🌙 QUESTIONS */
 const allQuestions: Question[] = [
-  { text: "Si ton rêve avait une odeur, laquelle serait-ce ?", tag: "absurde" },
-  { text: "As-tu déjà vu un objet bouger quand tu fermes les yeux ?", tag: "objets" },
-  { text: "Les rêves te reconnaissent-ils quand tu reviens ?", tag: "identité" },
-  { text: "As-tu déjà perdu un souvenir en dormant ?", tag: "mémoire" },
-  { text: "Les miroirs dorment-ils aussi ?", tag: "identité" },
-  { text: "Un rêve peut-il te mentir ?", tag: "peur" },
-  { text: "As-tu déjà entendu ton prénom dans un rêve ?", tag: "identité" },
-  { text: "Les objets dans tes rêves te regardent-ils ?", tag: "objets" },
-  { text: "Te réveilles-tu parfois dans un autre rêve ?", tag: "absurde" },
-  { text: "Les rêves ont-ils une voix ?", tag: "mémoire" },
-  { text: "Les murs respirent-ils quand tu dors ?", tag: "peur" },
-  { text: "Un souvenir peut-il changer de forme ?", tag: "mémoire" },
-  { text: "Les objets se souviennent-ils de toi ?", tag: "objets" },
-  { text: "Ton reflet t’a-t-il déjà menti ?", tag: "identité" },
-  { text: "As-tu déjà rêvé d’un endroit impossible ?", tag: "absurde" },
+  { text: "Si ton rêve avait une odeur, laquelle serait-ce ?" },
+  { text: "As-tu déjà vu un objet bouger quand tu fermes les yeux ?" },
+  { text: "Les rêves te reconnaissent-ils quand tu reviens ?" },
+  { text: "As-tu déjà perdu un souvenir en dormant ?" },
+  { text: "Les miroirs dorment-ils aussi ?" },
+  { text: "Un rêve peut-il te mentir ?" },
+  { text: "As-tu déjà entendu ton prénom dans un rêve ?" },
+  { text: "Les objets dans tes rêves te regardent-ils ?" },
+  { text: "Te réveilles-tu parfois dans un autre rêve ?" },
+  { text: "Les rêves ont-ils une voix ?" },
+  { text: "Les murs respirent-ils quand tu dors ?" },
+  { text: "Un souvenir peut-il changer de forme ?" },
+  { text: "Les objets se souviennent-ils de toi ?" },
+  { text: "Ton reflet t’a-t-il déjà menti ?" },
+  { text: "As-tu déjà rêvé d’un endroit impossible ?" },
 ];
 
 /* 🌙 PROFILS */
@@ -71,7 +70,6 @@ const characters: Character[] = [
 ];
 
 export default function TestPage() {
-  /* 🎲 5 QUESTIONS ALÉATOIRES */
   const questions = useMemo(() => {
     return [...allQuestions]
       .sort(() => Math.random() - 0.5)
@@ -79,13 +77,12 @@ export default function TestPage() {
   }, []);
 
   const [step, setStep] = useState(0);
-  const [score, setScore] = useState<Record<string, number>>({});
   const [result, setResult] = useState<Character | null>(null);
 
-  /* 🔊 son d’analyse */
   function playSound() {
     try {
       const ctx = new AudioContext();
+
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
 
@@ -104,13 +101,6 @@ export default function TestPage() {
   function answer() {
     playSound();
 
-    const tag = questions[step].tag;
-
-    setScore((prev) => ({
-      ...prev,
-      [tag]: (prev[tag] || 0) + 1,
-    }));
-
     const next = step + 1;
 
     if (next >= questions.length) {
@@ -121,22 +111,15 @@ export default function TestPage() {
   }
 
   function generateResult() {
-    const dominant =
-      Object.entries(score).sort((a, b) => b[1] - a[1])[0]?.[0];
-
     const randomCharacter =
       characters[Math.floor(Math.random() * characters.length)];
 
-    // 🔥 mélange logique + hasard (effet “machine vivante”)
-    const final =
-      Math.random() > 0.5 ? randomCharacter : characters[0];
-
-    setResult(final);
+    setResult(randomCharacter);
   }
 
   function shareWhatsApp() {
     const text =
-      "Je viens d’être analysé par une machine de rêves… essaie ici : " +
+      "Je viens d’être analysé par une étrange machine à rêves… essaie ici : " +
       window.location.href;
 
     window.open(
@@ -147,7 +130,7 @@ export default function TestPage() {
 
   function shareInstagram() {
     navigator.clipboard.writeText(window.location.href);
-    alert("Lien copié. Colle-le sur Instagram.");
+    alert("Lien copié. Colle-le dans Instagram.");
   }
 
   const currentQuestion = questions[step];
@@ -162,33 +145,58 @@ export default function TestPage() {
           <>
             <h1 style={styles.title}>ANALYSE ONYRIQUE</h1>
 
-            <p style={styles.text}>{currentQuestion.text}</p>
+            <p style={styles.text}>
+              {currentQuestion.text}
+            </p>
 
             <div style={styles.btnRow}>
-              <button onClick={answer} style={styles.btn}>Oui</button>
-              <button onClick={answer} style={styles.btn}>Non</button>
+              <button onClick={answer} style={styles.btn}>
+                Oui
+              </button>
+
+              <button onClick={answer} style={styles.btn}>
+                Non
+              </button>
             </div>
           </>
         ) : (
           <>
-            <h1 style={styles.sub}>PROFIL ÉTABLI</h1>
+            <h1 style={styles.sub}>
+              PROFIL ÉTABLI
+            </h1>
 
-            <h2 style={styles.resultTitle}>{result.name}</h2>
+            <h2 style={styles.resultTitle}>
+              {result.name}
+            </h2>
 
-            <p style={styles.text}>{result.text}</p>
+            <p
+              style={{
+                ...styles.text,
+                whiteSpace: "pre-line",
+              }}
+            >
+              {result.text}
+            </p>
 
-            {/* 🔥 VIRAL SHARE ZONE */}
             <div style={styles.share}>
-              <button onClick={shareInstagram} style={styles.btn}>
+              <button
+                onClick={shareInstagram}
+                style={styles.btn}
+              >
                 Partager sur Instagram
               </button>
 
-              <button onClick={shareWhatsApp} style={styles.btn}>
+              <button
+                onClick={shareWhatsApp}
+                style={styles.btn}
+              >
                 Partager sur WhatsApp
               </button>
 
               <button
-                onClick={() => (window.location.href = "/final")}
+                onClick={() =>
+                  (window.location.href = "/final")
+                }
                 style={{
                   ...styles.btn,
                   background: "white",
@@ -205,7 +213,6 @@ export default function TestPage() {
   );
 }
 
-/* 🎨 STYLE CINÉ / THÉÂTRE */
 const styles: Record<string, React.CSSProperties> = {
   main: {
     minHeight: "100vh",
@@ -235,15 +242,29 @@ const styles: Record<string, React.CSSProperties> = {
     pointerEvents: "none",
   },
 
-  container: { position: "relative", maxWidth: 520 },
+  container: {
+    position: "relative",
+    maxWidth: 520,
+  },
 
-  title: { opacity: 0.7, marginBottom: 20 },
+  title: {
+    opacity: 0.7,
+    marginBottom: 20,
+  },
 
-  sub: { opacity: 0.6 },
+  sub: {
+    opacity: 0.6,
+  },
 
-  text: { fontSize: 18, marginTop: 20 },
+  text: {
+    fontSize: 18,
+    marginTop: 20,
+  },
 
-  resultTitle: { fontSize: 32, marginTop: 10 },
+  resultTitle: {
+    fontSize: 32,
+    marginTop: 10,
+  },
 
   btnRow: {
     marginTop: 30,
