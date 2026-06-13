@@ -26,22 +26,19 @@ export default function FinalPage() {
     }
   }
 
-  /* 🎵 musique onirique discrète */
   useEffect(() => {
     const audio = document.getElementById("dream-audio") as HTMLAudioElement;
 
     if (audio) {
       audio.volume = 0.25;
-      audio.play().catch(() => {
-        // autoplay bloqué → ok
-      });
+      audio.play().catch(() => {});
     }
   }, []);
 
   return (
     <main className="min-h-screen text-white flex items-center justify-center px-6 py-12 relative overflow-hidden">
 
-      {/* 🎵 SOUND */}
+      {/* MUSIC */}
       <audio id="dream-audio" autoPlay loop>
         <source src="/dream-ambient.mp3" type="audio/mpeg" />
       </audio>
@@ -49,25 +46,18 @@ export default function FinalPage() {
       {/* BACKGROUND */}
       <div
         className="absolute inset-0 bg-cover bg-center scale-105"
-        style={{
-          backgroundImage: "url('/faccia.jpg')",
-        }}
+        style={{ backgroundImage: "url('/faccia.jpg')" }}
       />
 
       {/* DARK LAYERS */}
       <div className="absolute inset-0 bg-black/70" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(120,119,198,0.25),transparent_60%)]" />
 
-      {/* FLOATING ELEMENTS */}
-      <div className="absolute top-10 left-6 text-white/20 text-3xl rotate-12">✦</div>
-      <div className="absolute top-24 right-10 text-white/20 text-xl">☁</div>
-      <div className="absolute bottom-20 left-12 text-white/10 text-xl">↺</div>
-
       {/* CONTENT */}
       <div className="max-w-xl text-center relative z-10">
 
-        {/* HEADER */}
-        <p className="text-xs md:text-sm text-purple-300/80 mb-8 tracking-wide">
+        {/* HEADER (SEULE INFO HAUTE) */}
+        <p className="text-xs md:text-sm text-white/70 mb-8 tracking-wide">
           The Barnard Loop • Théâtre de l’Entrepôt • Festival OFF Avignon 2026 • 19h10
         </p>
 
@@ -76,26 +66,9 @@ export default function FinalPage() {
           THE BARNARD LOOP
         </h1>
 
-        {/* CORE MESSAGE (désormais sans lore explicatif) */}
-        <div className="mb-12 space-y-6">
-
-          <p className="text-xl md:text-2xl font-light text-white leading-snug">
-            un spectacle sur ce qui arrive quand plusieurs esprits commencent à rêver la même chose.
-          </p>
-
-          <p className="text-sm md:text-base text-white/70 leading-relaxed">
-            théâtre visuel • rêve collectif • expérience immersive
-          </p>
-
-          <p className="text-lg md:text-xl text-white/90">
-            tu ne regardes pas l’histoire. tu y entres.
-          </p>
-
-        </div>
-
-        {/* URGENCY */}
-        <p className="text-white/60 mb-8 text-sm">
-          expérience limitée • chaque représentation évolue légèrement
+        {/* SINGLE LINE INFO */}
+        <p className="text-white/70 mb-10 text-sm md:text-base">
+          expérience limitée • chaque représentation est une surprise
         </p>
 
         {/* CTA */}
@@ -106,6 +79,7 @@ export default function FinalPage() {
           🎟️ réserver ma place
         </button>
 
+        {/* INFO FOOTER */}
         <p className="text-xs text-white/40 mb-6">
           Festival OFF Avignon • Théâtre de l’Entrepôt
         </p>
