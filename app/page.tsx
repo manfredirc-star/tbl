@@ -24,10 +24,10 @@ export default function Home() {
         }}
       />
 
-      {/* ASSOMBRISSEMENT PLUS DOUX (meilleure visibilité image) */}
+      {/* ASSOMBRISSEMENT */}
       <div className="absolute inset-0 bg-black/45" />
 
-      {/* léger dégradé cinématographique (beaucoup plus subtil) */}
+      {/* DEGRADE CINEMATOGRAPHIQUE */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70" />
 
       {/* CONTENU */}
@@ -55,15 +55,10 @@ export default function Home() {
           </div>
 
           <div className="text-sm text-white/60 mt-2">
-            témoins recensés dans la boucle
+            personnes déjà rentrées dans la boucle
           </div>
 
         </div>
-
-        {/* MESSAGE HUMORISTIQUE REMPLAÇANT "REGISTRE DES ANOMALIES" */}
-        <p className="text-sm text-white/55 italic mb-10">
-          Le département des rêves déconseille de continuer.
-        </p>
 
         {/* BOUTON */}
         <a
