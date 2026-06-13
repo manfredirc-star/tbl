@@ -47,7 +47,7 @@ export default function FinalPage() {
       {/* CONTENT */}
       <div className="max-w-xl text-center relative z-10">
 
-        {/* HOOK (plus petit comme demandé) */}
+        {/* HOOK (petit comme demandé) */}
         <h1 className="text-2xl md:text-3xl mb-6 font-medium leading-snug text-white/90">
           ceci n’était pas qu’un rêve.  
           <br />
@@ -63,20 +63,20 @@ export default function FinalPage() {
           THE BARNARD LOOP
         </h2>
 
-        {/* CORE BLOCK */}
-        <div className="border border-white/20 rounded-3xl p-8 mb-10 bg-white/5 backdrop-blur">
+        {/* TEXT SANS CADRE (IMPORTANT → SUPPRESSION DU BLOCK VISUEL) */}
+        <div className="mb-10 space-y-6 text-white/80">
 
-          <p className="text-lg mb-4">
+          <p>
             certains rêves ne devraient pas rester dans une seule tête.
           </p>
 
-          <p className="text-sm text-white/70 mb-4">
+          <p className="text-white/70">
             Barnard les archive quand personne ne regarde.  
             Ciuffino les fait pousser dans les marges.  
             La Souris les lit avant même qu’on les pense.
           </p>
 
-          <p className="text-lg">
+          <p>
             et parfois, ça déborde entre les gens.
           </p>
 
