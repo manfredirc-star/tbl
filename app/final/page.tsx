@@ -27,6 +27,11 @@ export default function FinalPage() {
   return (
     <main className="min-h-screen text-white flex items-center justify-center px-6 py-12 relative overflow-hidden">
 
+      {/* 🎵 MUSIQUE ONIRIQUE DISCRÈTE */}
+      <audio autoPlay loop>
+        <source src="/dream-ambient.mp3" type="audio/mpeg" />
+      </audio>
+
       {/* BACKGROUND */}
       <div
         className="absolute inset-0 bg-cover bg-center scale-105"
@@ -47,8 +52,8 @@ export default function FinalPage() {
       {/* CONTENT */}
       <div className="max-w-xl text-center relative z-10">
 
-        {/* HEADER UNIFIÉ (comme demandé) */}
-        <p className="text-xs md:text-sm text-white/60 mb-6 tracking-wide">
+        {/* HEADER (couleur modifiée comme demandé) */}
+        <p className="text-xs md:text-sm text-purple-300/70 mb-6 tracking-wide">
           The Barnard Loop • Théâtre de l’Entrepôt • Festival OFF Avignon 2026 • 19h10
         </p>
 
@@ -57,7 +62,7 @@ export default function FinalPage() {
           THE BARNARD LOOP
         </h1>
 
-        {/* SUB MESSAGE (HOOK UNIQUE, PROPRE, SANS STORY) */}
+        {/* SUB MESSAGE */}
         <p className="text-base md:text-lg text-white/70 mb-10 leading-relaxed">
           ceci n’était pas qu’un rêve.  
           parfois, la magie est dans le monde réel.
@@ -98,12 +103,6 @@ export default function FinalPage() {
         >
           💌 partager ce rêve
         </button>
-
-        {/* FINAL LINE */}
-        <p className="mt-12 text-sm text-white/50 leading-relaxed">
-          ce n’est pas une histoire.  
-          c’est quelque chose que tu traverses.
-        </p>
 
       </div>
     </main>
