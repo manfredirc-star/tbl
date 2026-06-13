@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 
 export default function ResultPage() {
   const [data, setData] = useState(null);
+  const [url, setUrl] = useState("");
 
   useEffect(() => {
+    // 🔥 récupère le résultat du test
     const result = localStorage.getItem("barnard_result");
 
     if (result) {
@@ -16,22 +18,42 @@ export default function ResultPage() {
         text: "La boucle n’a pas terminé son observation.",
       });
     }
+
+    // 🔥 URL dynamique réelle de la page
+    setUrl(window.location.href);
   }, []);
 
   if (!data) return null;
 
+  // 🔥 TEXTE DE PARTAGE CONNECTÉ À LA PAGE RÉSULTAT
   const shareText = `TU ES : ${data.character}
 
 “${data.text}”
 
-Quelqu’un d’autre a eu ce résultat ?
+👉 Quelqu’un d’autre a eu ce résultat ?
 
 @dispensabarzotti
-https://tbl-mu.vercel.app/result`;
+${url}`;
 
   const copy = async () => {
     await navigator.clipboard.writeText(shareText);
     alert("copié pour Instagram / WhatsApp");
+  };
+
+  const shareNative = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "The Barnard Loop",
+          text: shareText,
+          url,
+        });
+      } else {
+        copy();
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -48,54 +70,58 @@ https://tbl-mu.vercel.app/result`;
       {/* 🌫 DARK CINEMATIC OVERLAY */}
       <div className="absolute inset-0 bg-black/60" />
 
-      {/* 🎬 VIGNETTE CINÉMA (IMPORTANT POUR VIRALITÉ) */}
+      {/* 🎬 VIGNETTE CINÉMA */}
       <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.9)]" />
 
-      {/* ✨ LIGHT GRADIENT MYSTÉRIEUX */}
+      {/* ✨ LIGHT MYSTERIEUX */}
       <div className="absolute inset-0 bg-gradient-to-b from-purple-900/30 via-transparent to-black/80" />
 
       {/* CONTENT */}
       <div className="relative z-10 text-center max-w-md px-6">
 
-        {/* SMALL TITLE */}
         <p className="text-[10px] tracking-[0.5em] text-white/50 mb-10">
           THE BARNARD LOOP
         </p>
 
-        {/* MAIN LABEL */}
         <p className="text-sm text-white/50 mb-2">
           TU ES
         </p>
 
-        {/* CHARACTER */}
         <h1 className="text-5xl font-bold tracking-[0.2em] mb-6">
           {data.character}
         </h1>
 
-        {/* DESCRIPTION */}
         <p className="italic text-white/80 mb-10 leading-relaxed">
           {data.text}
         </p>
 
-        {/* VIRAL QUESTION */}
         <p className="text-sm text-white/60 mb-2">
           Quelqu’un d’autre a eu ce résultat ?
         </p>
 
-        {/* INSTAGRAM SIGNATURE */}
         <p className="text-sm text-white/40 mb-10">
           @dispensabarzotti
         </p>
 
-        {/* CTA SHARE */}
-        <button
-          onClick={copy}
-          className="w-full px-6 py-3 border border-white/30 rounded-xl hover:bg-white hover:text-black transition"
-        >
-          partager le résultat
-        </button>
+        {/* 🔥 SHARE BUTTONS */}
+        <div className="space-y-3">
 
-        {/* SUBTLE FOOTER (VIRALITY BOOST) */}
+          <button
+            onClick={shareNative}
+            className="w-full px-6 py-3 border border-white/30 rounded-xl hover:bg-white hover:text-black transition"
+          >
+            partager (WhatsApp / Instagram)
+          </button>
+
+          <button
+            onClick={copy}
+            className="w-full px-6 py-3 border border-white/20 rounded-xl text-white/70 hover:text-white"
+          >
+            copier le texte
+          </button>
+
+        </div>
+
         <p className="text-[10px] text-white/30 mt-8 tracking-wide">
           d’autres identités apparaissent dans la boucle...
         </p>
