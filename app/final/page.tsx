@@ -10,7 +10,7 @@ export default function FinalPage() {
 
   function share() {
     const text =
-      "Je suis tombé sur The Barnard Loop… je ne sais pas si c’est un spectacle ou une expérience collective de rêve. À Avignon cet été.";
+      "The Barnard Loop m’a laissé un truc bizarre en tête… je sais pas trop si j’ai vu un spectacle ou autre chose. À Avignon cet été.";
 
     if (navigator.share) {
       navigator.share({
@@ -47,17 +47,15 @@ export default function FinalPage() {
       {/* CONTENT */}
       <div className="max-w-xl text-center relative z-10">
 
-        {/* HOOK (FORT) */}
+        {/* HOOK (MODIFIÉ) */}
         <h1 className="text-4xl md:text-6xl mb-6 font-semibold leading-tight">
-          tu n’étais pas censé arriver ici.
+          ceci n’était pas qu’un rêve.
+          <br />
+          parfois, la magie est dans le monde réel.
         </h1>
 
-        <p className="text-lg md:text-xl text-white/80 mb-2">
-          certains spectateurs ne savent pas comment ils ont trouvé cette page.
-        </p>
-
-        <p className="text-lg md:text-xl text-white/60 mb-10">
-          et pourtant ils finissent tous au même endroit.
+        <p className="text-lg md:text-xl text-white/70 mb-10">
+          The Barnard Loop existe quelque part entre les deux.
         </p>
 
         {/* TITLE */}
@@ -65,51 +63,47 @@ export default function FinalPage() {
           THE BARNARD LOOP
         </h2>
 
-        <p className="text-white/70 mb-10">
-          une anomalie dans le monde des rêves collectifs.
-        </p>
-
-        {/* CORE BLOCK */}
+        {/* CORE BLOCK (RÉÉCRIT) */}
         <div className="border border-white/20 rounded-3xl p-8 mb-10 bg-white/5 backdrop-blur">
 
           <p className="text-lg mb-4">
-            il y a des rêves qui ne devraient appartenir à personne.
+            certains rêves ne devraient pas rester dans une seule tête.
           </p>
 
           <p className="text-sm text-white/70 mb-4">
-            Barnard les archive.  
-            Ciuffino les fait pousser.  
-            La Souris les lit avant toi.
+            Barnard les archive quand personne ne regarde.  
+            Ciuffino les fait pousser dans les marges.  
+            La Souris les lit avant même qu’on les pense.
           </p>
 
           <p className="text-lg">
-            et parfois… ils deviennent partagés.
+            et parfois, ça déborde entre les gens.
           </p>
 
         </div>
 
-        {/* TESTIMONIALS (TRÈS IMPORTANT POUR VENDRE) */}
+        {/* TESTIMONIALS (PLUS RÉALISTES) */}
         <div className="mb-10 space-y-4 text-white/70 text-sm">
 
-          <p>“je ne sais pas si j’ai assisté à un spectacle ou à un rêve collectif.”</p>
+          <p>“je pensais venir voir un spectacle… c’était plus étrange que ça.”</p>
 
-          <p>“à la fin, j’avais l’impression que quelqu’un d’autre avait vécu ma vie.”</p>
+          <p>“à un moment j’ai oublié que j’étais dans une salle.”</p>
 
-          <p>“je suis sorti différent sans savoir pourquoi.”</p>
+          <p>“j’ai mis quelques minutes à revenir à la réalité après.”</p>
 
         </div>
 
         {/* URGENCY */}
         <p className="text-white/60 mb-8">
-          représentation limitée • chaque soirée est légèrement différente
+          représentation limitée • expérience vivante et changeante
         </p>
 
-        {/* CTA PRIMARY */}
+        {/* CTA */}
         <button
           onClick={openAvignon}
           className="w-full py-5 rounded-2xl bg-white text-black text-lg font-semibold hover:scale-105 transition mb-3"
         >
-          🎟️ entrer dans la boucle
+          🎟️ réserver ma place
         </button>
 
         <p className="text-xs text-white/40 mb-6">
@@ -126,8 +120,8 @@ export default function FinalPage() {
 
         {/* FINAL LINE */}
         <p className="mt-12 text-sm text-white/50 leading-relaxed">
-          ce spectacle ne se raconte pas.  
-          il se traverse.
+          ce n’est pas une histoire.  
+          c’est quelque chose que tu traverses.
         </p>
 
       </div>
