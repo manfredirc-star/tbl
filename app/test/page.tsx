@@ -1,268 +1,143 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
-export default function TestPage() {
-  const router = useRouter();
-
-  const [step, setStep] = useState(0);
-  const [percent, setPercent] = useState(0);
-  const [boot, setBoot] = useState(true);
-
-  const finalPercent = Math.floor(Math.random() * 101);
-
-  const allQuestions = [
-    "Les objets rêvent-ils quand personne ne les regarde ?",
-    "As-tu déjà entendu un mur respirer ?",
-    "Une cafetière peut-elle te juger silencieusement ?",
-    "Tu as dormi cette nuit ou tu as juste cligné des yeux dans le futur ?",
-    "Le sucre te reconnaît-il quand tu le touches ?",
-    "Les rêves ont-ils un GPS ou ils se perdent volontairement ?",
-    "Ton oreiller te raconte-t-il des secrets le matin ?",
-    "Si tu fermes les yeux, est-ce que quelqu’un prend ta place ?",
-    "Les escaliers montent-ils aussi les pensées ?",
-    "Est-ce que ton reflet a déjà refusé de te suivre ?",
-    "Tu préfères le sucre ou le chaos doux du matin ?",
-    "Une chaise pense-t-elle à s’enfuir parfois ?",
-    "Les rêves peuvent-ils mentir pour survivre ?",
-    "As-tu déjà oublié un rêve pendant qu’il te regardait partir ?",
-  ];
-
-  const [questions] = useState(() => {
-    return [...allQuestions].sort(() => Math.random() - 0.5).slice(0, 5);
-  });
-
-  const characters = [
-    {
-      name: "BARNARD",
-      color: "from-indigo-500 to-purple-700",
-      text:
-        "Barnard classe les rêves des autres dans des dossiers qu’il oublie immédiatement.",
-    },
-    {
-      name: "LE CLOWN ADMINISTRATIF",
-      color: "from-pink-500 to-orange-600",
-      text:
-        "Il tamponne les émotions avec sérieux et rit quand personne ne regarde.",
-    },
-    {
-      name: "LA SOURIS QUI SAIT TOUT",
-      color: "from-gray-400 to-gray-700",
-      text: "Elle mange les pensées en trop et refuse de les expliquer.",
-    },
-    {
-      name: "LE LIT QUI GRINCE",
-      color: "from-yellow-600 to-amber-800",
-      text: "Chaque craquement est une phrase mal comprise.",
-    },
-    {
-      name: "MADAME RÉVEIL",
-      color: "from-pink-500 to-red-600",
-      text:
-        "Elle sonne uniquement dans les mondes qui hésitent trop longtemps.",
-    },
-  ];
-
-  const [result] = useState(
-    () => characters[Math.floor(Math.random() * characters.length)]
-  );
+export default function ResultPage() {
+  const [data, setData] = useState(null);
+  const [url, setUrl] = useState("");
 
   useEffect(() => {
-    const t = setTimeout(() => setBoot(false), 1200);
-    return () => clearTimeout(t);
+    try {
+      const result = localStorage.getItem("barnard_result");
+
+      if (result) {
+        setData(JSON.parse(result));
+      } else {
+        setData({
+          character: "ENTITÉ INCONNUE",
+          text: "La boucle n’a pas terminé son observation.",
+        });
+      }
+
+      setUrl(window.location.href);
+    } catch (e) {
+      setData({
+        character: "ERREUR",
+        text: "Impossible de charger le résultat.",
+      });
+    }
   }, []);
 
-  useEffect(() => {
-    if (step === questions.length) {
-      let current = 0;
+  if (!data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        Chargement...
+      </div>
+    );
+  }
 
-      const interval = setInterval(() => {
-        current += 2;
+  const shareText = `TU ES : ${data.character}
 
-        if (current >= finalPercent) {
-          current = finalPercent;
-          clearInterval(interval);
-        }
+“${data.text}”
 
-        setPercent(current);
-      }, 25);
+👉 Quelqu’un d’autre a eu ce résultat ?
 
-      return () => clearInterval(interval);
+@dispensabarzotti
+${url}`;
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(shareText);
+      alert("copié pour Instagram / WhatsApp");
+    } catch (e) {
+      console.log(e);
     }
-  }, [step]);
+  };
 
-  function answer() {
-    setStep((prev) => prev + 1);
-  }
-
-  // 🎯 FINAL STEP → SAVE + REDIRECT
-  function goToResult() {
-    const id = `${result.name}-${Date.now()}`;
-
-    const data = {
-      id,
-      character: result.name,
-      text: result.text,
-      percent,
-    };
-
-    // sauvegarde locale
-    localStorage.setItem("barnard_result", JSON.stringify(data));
-
-    // redirection vers page résultat
-    router.push("/result");
-  }
-
-  // 📸 STORY INSTAGRAM
-  function generateInstagramStory() {
-    const canvas = document.createElement("canvas");
-    canvas.width = 1080;
-    canvas.height = 1920;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, "#0b0b0f");
-    gradient.addColorStop(1, "#3b0a57");
-
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-
-    ctx.font = "bold 70px Arial";
-    ctx.fillText("TEST ONIRIQUE", canvas.width / 2, 300);
-
-    ctx.font = "bold 90px Arial";
-    ctx.fillText(result.name, canvas.width / 2, 800);
-
-    ctx.font = "50px Arial";
-    ctx.fillText(`${percent}% de contamination`, canvas.width / 2, 950);
-
-    ctx.globalAlpha = 0.8;
-    ctx.font = "30px Arial";
-    ctx.fillText("Quel personnage es-tu ?", canvas.width / 2, 1100);
-
-    const link = document.createElement("a");
-    link.download = "story-onirique.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  }
-
-  async function shareFriend() {
-    const text = `J’ai fait le TEST DE CONTAMINATION ONIRIQUE.
-
-Résultat : ${result.name}
-Contamination : ${percent}%
-
-“Quelqu’un d’autre a eu ce résultat ?”
-
-https://tbl-mu.vercel.app/test`;
-
+  const shareNative = async () => {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "Test de contamination onirique",
-          text,
-          url: window.location.href,
+          title: "The Barnard Loop",
+          text: shareText,
+          url,
         });
       } else {
-        await navigator.clipboard.writeText(text);
-        alert("Message copié pour Instagram / WhatsApp");
+        await copy();
       }
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center text-white overflow-hidden">
+    <main className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
 
+      {/* BACKGROUND */}
       <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/background.jpg')" }}
+        className="absolute inset-0 bg-cover bg-center scale-110"
+        style={{
+          backgroundImage: "url('/background.jpg')",
+        }}
       />
 
+      {/* OVERLAY SAFE */}
       <div className="absolute inset-0 bg-black/60" />
-      <div className={`absolute inset-0 bg-gradient-to-b ${result.color} opacity-20`} />
+      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/30 via-transparent to-black/80" />
 
-      {boot && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black z-50">
-          <p className="animate-pulse text-white/70">
-            synchronisation onirique...
+      {/* CONTENT */}
+      <div className="relative z-10 text-center max-w-md px-6">
+
+        {/* HEADER */}
+        <p className="text-lg mb-2">
+          TU ES{" "}
+          <span className="font-bold">
+            {data.character}
+          </span>
+        </p>
+
+        {/* TEXT BOX SAFE */}
+        <div className="mb-10 border border-white/10 bg-white/5 backdrop-blur-md rounded-xl p-4">
+          <p className="italic text-white/80">
+            {data.text}
           </p>
         </div>
-      )}
 
-      <div className="relative z-10 w-full max-w-md">
+        {/* VIRAL HOOK */}
+        <p className="text-sm text-white/60 mb-1">
+          Quelqu’un d’autre a eu ce résultat ?
+        </p>
 
-        <h1 className="text-xl font-bold tracking-widest mb-10">
-          TEST DE CONTAMINATION ONYRIQUE
-        </h1>
+        <p className="text-sm text-white/40 mb-10">
+          @dispensabarzotti
+        </p>
 
-        <div className="h-[1px] w-full bg-white/10 mb-8" />
+        {/* BUTTONS */}
+        <div className="space-y-3">
 
-        {step < questions.length ? (
-          <>
-            <p className="mb-8 text-lg">{questions[step]}</p>
+          <button
+            onClick={shareNative}
+            className="w-full px-6 py-3 border border-white/30 rounded-xl"
+          >
+            partager
+          </button>
 
-            <div className="flex gap-4 justify-center">
-              <button onClick={answer} className="px-6 py-3 border rounded">
-                Oui
-              </button>
+          <button
+            onClick={copy}
+            className="w-full px-6 py-3 border border-white/20 rounded-xl"
+          >
+            copier le texte
+          </button>
 
-              <button onClick={answer} className="px-6 py-3 border rounded">
-                Non
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="space-y-6">
+          <button
+            onClick={() => (window.location.href = "/final")}
+            className="w-full px-6 py-4 bg-white text-black rounded-xl font-semibold"
+          >
+            découvrir le spectacle
+          </button>
 
-            <div className={`p-6 rounded-xl bg-gradient-to-br ${result.color}`}>
-              <h2 className="text-xl font-bold mb-3">{result.name}</h2>
-              <p className="text-sm opacity-90">{result.text}</p>
-            </div>
+        </div>
 
-            <p className="text-white/70">
-              CONTAMINATION : <b>{percent}%</b>
-            </p>
-
-            <p className="text-sm text-white/60 italic">
-              Quelqu’un d’autre a eu ce résultat ?
-            </p>
-
-            <div className="pt-4 border-t border-white/10 space-y-3">
-
-              <button
-                onClick={generateInstagramStory}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 font-semibold"
-              >
-                📸 Story Instagram
-              </button>
-
-              <button
-                onClick={shareFriend}
-                className="w-full py-3 rounded-xl border border-white/30"
-              >
-                📨 Envoyer à un ami
-              </button>
-
-            </div>
-
-            {/* 🔥 NEW MAIN VIRAL ENTRY */}
-            <button
-              onClick={goToResult}
-              className="w-full px-6 py-3 border rounded hover:bg-white hover:text-black transition"
-            >
-              🎭 Accéder à ma trace dans la boucle
-            </button>
-
-          </div>
-        )}
       </div>
     </main>
   );
