@@ -47,42 +47,23 @@ export default function FinalPage() {
       {/* CONTENT */}
       <div className="max-w-xl text-center relative z-10">
 
-        {/* HOOK (petit comme demandé) */}
-        <h1 className="text-2xl md:text-3xl mb-6 font-medium leading-snug text-white/90">
-          ceci n’était pas qu’un rêve.  
-          <br />
-          parfois, la magie est dans le monde réel.
-        </h1>
-
-        <p className="text-sm md:text-base text-white/60 mb-8">
+        {/* HEADER UNIFIÉ (comme demandé) */}
+        <p className="text-xs md:text-sm text-white/60 mb-6 tracking-wide">
           The Barnard Loop • Théâtre de l’Entrepôt • Festival OFF Avignon 2026 • 19h10
         </p>
 
         {/* TITLE */}
-        <h2 className="text-3xl md:text-4xl mb-6 tracking-wide">
+        <h1 className="text-3xl md:text-5xl font-semibold tracking-wide mb-10">
           THE BARNARD LOOP
-        </h2>
+        </h1>
 
-        {/* TEXT SANS CADRE (IMPORTANT → SUPPRESSION DU BLOCK VISUEL) */}
-        <div className="mb-10 space-y-6 text-white/80">
+        {/* SUB MESSAGE (HOOK UNIQUE, PROPRE, SANS STORY) */}
+        <p className="text-base md:text-lg text-white/70 mb-10 leading-relaxed">
+          ceci n’était pas qu’un rêve.  
+          parfois, la magie est dans le monde réel.
+        </p>
 
-          <p>
-            certains rêves ne devraient pas rester dans une seule tête.
-          </p>
-
-          <p className="text-white/70">
-            Barnard les archive quand personne ne regarde.  
-            Ciuffino les fait pousser dans les marges.  
-            La Souris les lit avant même qu’on les pense.
-          </p>
-
-          <p>
-            et parfois, ça déborde entre les gens.
-          </p>
-
-        </div>
-
-        {/* TESTIMONIALS PLUS RÉALISTES */}
+        {/* TESTIMONIALS */}
         <div className="mb-10 space-y-4 text-white/70 text-sm">
 
           <p>“je ne m’attendais pas à être autant dedans.”</p>
