@@ -6,7 +6,6 @@ export default function ResultPage() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    // on récupère le résultat du test
     const result = localStorage.getItem("barnard_result");
 
     if (result) {
@@ -36,49 +35,70 @@ https://tbl-mu.vercel.app/result`;
   };
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center text-white p-6">
+    <main className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
 
-      {/* BACKGROUND IMAGE */}
+      {/* 🌌 BACKGROUND IMAGE (SPECTACLE) */}
       <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/background.jpg')" }}
+        className="absolute inset-0 bg-cover bg-center scale-110"
+        style={{
+          backgroundImage: "url('/background.jpg')",
+        }}
       />
 
-      {/* DARK OVERLAY */}
+      {/* 🌫 DARK CINEMATIC OVERLAY */}
       <div className="absolute inset-0 bg-black/60" />
 
-      {/* CONTENT */}
-      <div className="relative z-10 text-center max-w-md">
+      {/* 🎬 VIGNETTE CINÉMA (IMPORTANT POUR VIRALITÉ) */}
+      <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.9)]" />
 
-        <p className="text-xs tracking-[0.4em] text-white/60 mb-10">
+      {/* ✨ LIGHT GRADIENT MYSTÉRIEUX */}
+      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/30 via-transparent to-black/80" />
+
+      {/* CONTENT */}
+      <div className="relative z-10 text-center max-w-md px-6">
+
+        {/* SMALL TITLE */}
+        <p className="text-[10px] tracking-[0.5em] text-white/50 mb-10">
           THE BARNARD LOOP
         </p>
 
-        <p className="text-sm text-white/60 mb-2">TU ES</p>
+        {/* MAIN LABEL */}
+        <p className="text-sm text-white/50 mb-2">
+          TU ES
+        </p>
 
-        <h1 className="text-4xl font-bold mb-6">
+        {/* CHARACTER */}
+        <h1 className="text-5xl font-bold tracking-[0.2em] mb-6">
           {data.character}
         </h1>
 
-        <p className="italic text-white/80 mb-10">
+        {/* DESCRIPTION */}
+        <p className="italic text-white/80 mb-10 leading-relaxed">
           {data.text}
         </p>
 
+        {/* VIRAL QUESTION */}
         <p className="text-sm text-white/60 mb-2">
           Quelqu’un d’autre a eu ce résultat ?
         </p>
 
-        <p className="text-sm text-white/50 mb-8">
+        {/* INSTAGRAM SIGNATURE */}
+        <p className="text-sm text-white/40 mb-10">
           @dispensabarzotti
         </p>
 
-        {/* SHARE BUTTON */}
+        {/* CTA SHARE */}
         <button
           onClick={copy}
-          className="px-6 py-3 border rounded"
+          className="w-full px-6 py-3 border border-white/30 rounded-xl hover:bg-white hover:text-black transition"
         >
-          partager sur WhatsApp / Instagram
+          partager le résultat
         </button>
+
+        {/* SUBTLE FOOTER (VIRALITY BOOST) */}
+        <p className="text-[10px] text-white/30 mt-8 tracking-wide">
+          d’autres identités apparaissent dans la boucle...
+        </p>
 
       </div>
     </main>
