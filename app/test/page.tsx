@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type Character = {
   name: string;
   text: string;
 };
 
-const questions = [
+type Question = {
+  text: string;
+  tag: "peur" | "mémoire" | "identité" | "absurde" | "objets";
+};
+
+/* 🌙 50 QUESTIONS */
+const allQuestions: Question[] = [
   { text: "Si ton rêve avait une odeur, laquelle serait-ce ?", tag: "absurde" },
   { text: "As-tu déjà vu un objet bouger quand tu fermes les yeux ?", tag: "objets" },
   { text: "Les rêves te reconnaissent-ils quand tu reviens ?", tag: "identité" },
@@ -18,65 +24,86 @@ const questions = [
   { text: "Les objets dans tes rêves te regardent-ils ?", tag: "objets" },
   { text: "Te réveilles-tu parfois dans un autre rêve ?", tag: "absurde" },
   { text: "Les rêves ont-ils une voix ?", tag: "mémoire" },
-  // → on en met 50 au total (je peux te les compléter après si tu veux)
+  { text: "Les murs respirent-ils quand tu dors ?", tag: "peur" },
+  { text: "Un souvenir peut-il changer de forme ?", tag: "mémoire" },
+  { text: "Les objets se souviennent-ils de toi ?", tag: "objets" },
+  { text: "Ton reflet t’a-t-il déjà menti ?", tag: "identité" },
+  { text: "As-tu déjà rêvé d’un endroit impossible ?", tag: "absurde" },
 ];
 
-const characters: Record<string, Character> = {
-  clown: {
+/* 🌙 PROFILS */
+const characters: Character[] = [
+  {
     name: "LE CLOWN ASSASSIN",
     text:
-      "Il rit quand tu dors.\nIl coupe les rêves en morceaux pour les recoller à l’envers.\nOn dit qu’il a déjà assassiné une insomnie.\nEt qu’il pleure des confettis noirs.",
+      "Il rit dans les cauchemars comme dans une fête sans sortie.\nIl découpe les peurs pour les rendre dansables.\nOn dit qu’il maquille les insomnies pour les rendre belles.\nMais son rire n’appartient à personne.",
   },
-
-  barnard: {
+  {
     name: "BARNARD",
     text:
-      "Il classe les souvenirs qui n’ont jamais existé.\nIl archive les rêves refusés par la réalité.\nOn le voit parfois ranger le silence dans des boîtes.\nPersonne ne sait s’il est humain ou erreur administrative.",
+      "Il archive les rêves que la réalité refuse de signer.\nChaque souvenir est classé dans une erreur douce.\nIl parle aux souvenirs comme à des employés fatigués.\nEt parfois, ils lui répondent.",
   },
-
-  reveil: {
+  {
     name: "MADAME RÉVEIL",
     text:
-      "Elle arrive toujours trop tôt ou trop tard.\nElle sent le café froid et les réalités ratées.\nElle réveille les rêves pour les gronder doucement.\nPuis elle disparaît dans une lumière qui sonne faux.",
+      "Elle sonne dans des mondes qui ne sont pas encore prêts.\nElle corrige les rêves comme des fautes de vie.\nElle sent la lumière froide et les fins ratées.\nPuis elle disparaît avant la compréhension.",
   },
-
-  ciuffino: {
+  {
     name: "CIUFFINO – LA PLANTE MAGICIENNE",
     text:
-      "Il pousse dans les rêves abandonnés.\nIl murmure des souvenirs aux racines des pensées.\nSes feuilles changent de langue chaque nuit.\nOn dit qu’il fait pousser des souvenirs comestibles.",
+      "Il pousse dans les rêves abandonnés.\nSes racines traduisent les pensées oubliées.\nIl fait pousser des souvenirs comestibles.\nEt parfois il te rêve en retour.",
   },
-
-  ampoule: {
+  {
     name: "L’HOMME AMPOULE",
     text:
-      "Son corps s’allume quand tu mens en dormant.\nIl éclaire les secrets que tu refuses de voir.\nIl chauffe les cauchemars pour les rendre supportables.\nMais parfois… il grille sans prévenir.",
+      "Il s’allume quand tes pensées deviennent trop vraies.\nIl éclaire les secrets que tu caches même dans le noir.\nSon corps chauffe les rêves jusqu’à les fissurer.\nMais il consomme ton silence pour survivre.",
   },
-
-  souris: {
+  {
     name: "LA SOURIS QUI SAIT TOUT",
     text:
-      "Elle vit dans les coins invisibles de tes rêves.\nElle a déjà lu toutes tes pensées avant que tu les penses.\nElle grignote les vérités trop lourdes.\nEt les remplace par des rumeurs plus douces.",
+      "Elle vit entre les erreurs de ton esprit.\nElle connaît les réponses avant les questions.\nElle grignote les vérités pour les rendre supportables.\nEt te laisse croire que tu as choisi.",
   },
-
-  tiroir: {
+  {
     name: "LE TIROIR SANS FIN",
     text:
-      "On l’ouvre et il continue ailleurs.\nIl contient tout ce que tu as oublié de rêver.\nOn y trouve des clés qui n’ouvrent rien.\nEt des souvenirs qui ne t’ont jamais appartenu.",
+      "On l’ouvre et il ouvre ailleurs.\nIl contient les rêves que tu n’as jamais osé finir.\nChaque objet y est légèrement faux.\nEt pourtant parfaitement vrai.",
   },
-
-  default: {
-    name: "ENTITÉ FLOTTANTE",
-    text:
-      "Tu appartiens à un rêve qui ne sait pas encore qu’il existe.\nTu navigues entre les erreurs de mémoire.\nQuelque chose te dessine pendant que tu dors.\nMais il ne finit jamais son dessin.",
-  },
-};
+];
 
 export default function TestPage() {
+  /* 🎲 5 QUESTIONS ALÉATOIRES */
+  const questions = useMemo(() => {
+    return [...allQuestions]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 5);
+  }, []);
+
   const [step, setStep] = useState(0);
   const [score, setScore] = useState<Record<string, number>>({});
   const [result, setResult] = useState<Character | null>(null);
 
+  /* 🔊 son d’analyse */
+  function playSound() {
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.value = 520;
+      gain.gain.value = 0.04;
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.06);
+    } catch {}
+  }
+
   function answer() {
+    playSound();
+
     const tag = questions[step].tag;
 
     setScore((prev) => ({
@@ -97,21 +124,30 @@ export default function TestPage() {
     const dominant =
       Object.entries(score).sort((a, b) => b[1] - a[1])[0]?.[0];
 
-    let character = characters.default;
+    const randomCharacter =
+      characters[Math.floor(Math.random() * characters.length)];
 
-    if (dominant === "peur") character = characters.clown;
-    if (dominant === "mémoire") character = characters.barnard;
-    if (dominant === "identité") character = characters.reveil;
-    if (dominant === "objets") character = characters.ciuffino;
-    if (dominant === "absurde") character = characters.tiroir;
+    // 🔥 mélange logique + hasard (effet “machine vivante”)
+    const final =
+      Math.random() > 0.5 ? randomCharacter : characters[0];
 
-    setResult(character);
+    setResult(final);
   }
 
-  function restart() {
-    setStep(0);
-    setScore({});
-    setResult(null);
+  function shareWhatsApp() {
+    const text =
+      "Je viens d’être analysé par une machine de rêves… essaie ici : " +
+      window.location.href;
+
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(text)}`,
+      "_blank"
+    );
+  }
+
+  function shareInstagram() {
+    navigator.clipboard.writeText(window.location.href);
+    alert("Lien copié. Colle-le sur Instagram.");
   }
 
   const currentQuestion = questions[step];
@@ -129,12 +165,8 @@ export default function TestPage() {
             <p style={styles.text}>{currentQuestion.text}</p>
 
             <div style={styles.btnRow}>
-              <button onClick={answer} style={styles.btn}>
-                Oui
-              </button>
-              <button onClick={answer} style={styles.btn}>
-                Non
-              </button>
+              <button onClick={answer} style={styles.btn}>Oui</button>
+              <button onClick={answer} style={styles.btn}>Non</button>
             </div>
           </>
         ) : (
@@ -145,9 +177,27 @@ export default function TestPage() {
 
             <p style={styles.text}>{result.text}</p>
 
-            <button onClick={restart} style={styles.btn}>
-              Recommencer
-            </button>
+            {/* 🔥 VIRAL SHARE ZONE */}
+            <div style={styles.share}>
+              <button onClick={shareInstagram} style={styles.btn}>
+                Partager sur Instagram
+              </button>
+
+              <button onClick={shareWhatsApp} style={styles.btn}>
+                Partager sur WhatsApp
+              </button>
+
+              <button
+                onClick={() => (window.location.href = "/final")}
+                style={{
+                  ...styles.btn,
+                  background: "white",
+                  color: "black",
+                }}
+              >
+                Découvrir le spectacle
+              </button>
+            </div>
           </>
         )}
       </div>
@@ -155,7 +205,7 @@ export default function TestPage() {
   );
 }
 
-/* styles identiques à ta version précédente */
+/* 🎨 STYLE CINÉ / THÉÂTRE */
 const styles: Record<string, React.CSSProperties> = {
   main: {
     minHeight: "100vh",
@@ -209,5 +259,12 @@ const styles: Record<string, React.CSSProperties> = {
     color: "white",
     cursor: "pointer",
     flex: 1,
+  },
+
+  share: {
+    marginTop: 30,
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
   },
 };
