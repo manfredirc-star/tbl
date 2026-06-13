@@ -56,17 +56,20 @@ export default function FinalPage() {
       {/* CONTENT */}
       <div className="max-w-xl text-center relative z-10">
 
-        {/* HEADER (SEULE INFO HAUTE) */}
-        <p className="text-xs md:text-sm text-white/70 mb-8 tracking-wide">
-          The Barnard Loop • Théâtre de l’Entrepôt • Festival OFF Avignon 2026 • 19h10
-        </p>
+        {/* HEADER (REDESIGNÉ / PLUS CAPTIVANT) */}
+        <div className="mb-10 space-y-3">
 
-        {/* TITLE */}
-        <h1 className="text-4xl md:text-6xl font-semibold tracking-wide mb-10">
-          THE BARNARD LOOP
-        </h1>
+          <p className="text-xs md:text-sm tracking-[0.2em] text-white/60 uppercase">
+            Théâtre de l’Entrepôt • Festival OFF Avignon 2026 • 19h10
+          </p>
 
-        {/* SINGLE LINE INFO */}
+          <h1 className="text-4xl md:text-6xl font-semibold tracking-[0.08em]">
+            THE BARNARD LOOP
+          </h1>
+
+        </div>
+
+        {/* SINGLE INFO LINE */}
         <p className="text-white/70 mb-10 text-sm md:text-base">
           expérience limitée • chaque représentation est une surprise
         </p>
@@ -78,11 +81,6 @@ export default function FinalPage() {
         >
           🎟️ réserver ma place
         </button>
-
-        {/* INFO FOOTER */}
-        <p className="text-xs text-white/40 mb-6">
-          Festival OFF Avignon • Théâtre de l’Entrepôt
-        </p>
 
         {/* SHARE */}
         <button
