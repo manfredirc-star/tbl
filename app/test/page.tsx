@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 type Character = {
   name: string;
@@ -22,49 +22,71 @@ export default function TestPage() {
     { name: "SOURIS", text: "Mange les pensées inutiles." },
   ];
 
-  const [step, setStep] = useState<number>(0);
+  const [step, setStep] = useState(0);
   const [result, setResult] = useState<Character | null>(null);
-  const [mounted, setMounted] = useState<boolean>(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   function answer() {
-    const next = step + 1;
+    const nextStep = step + 1;
 
-    if (next >= questions.length) {
-      const random =
+    if (nextStep >= questions.length) {
+      const randomCharacter =
         characters[Math.floor(Math.random() * characters.length)];
-      setResult(random);
+
+      setResult(randomCharacter);
     } else {
-      setStep(next);
+      setStep(nextStep);
     }
   }
 
-  if (!mounted) return null;
-
-  if (result) {
-    return (
-      <main style={{ color: "white", textAlign: "center" }}>
-        <h1>TU ES...</h1>
-        <h2>{result.name}</h2>
-        <p>{result.text}</p>
-
-        <button onClick={() => window.location.reload()}>
-          Recommencer
-        </button>
-      </main>
-    );
+  function restart() {
+    setStep(0);
+    setResult(null);
   }
 
   return (
-    <main style={{ color: "white", textAlign: "center" }}>
-      <h1>TEST</h1>
-      <p>{questions[step]}</p>
+    <main
+      style={{
+        minHeight: "100vh",
+        background: "black",
+        color: "white",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        padding: 20,
+      }}
+    >
+      {/* RESULT */}
+      {result ? (
+        <div>
+          <h1>TU ES...</h1>
+          <h2>{result.name}</h2>
+          <p>{result.text}</p>
 
-      <button onClick={answer}>Oui</button>
-      <button onClick={answer}>Non</button>
+          <button onClick={restart} style={{ marginTop: 20 }}>
+            Recommencer
+          </button>
+        </div>
+      ) : (
+        /* QUESTIONS */
+        <div>
+          <h1>TEST</h1>
+
+          <p style={{ marginTop: 20 }}>
+            {questions[step]}
+          </p>
+
+          <div style={{ marginTop: 20 }}>
+            <button onClick={answer} style={{ marginRight: 10 }}>
+              Oui
+            </button>
+
+            <button onClick={answer}>
+              Non
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
